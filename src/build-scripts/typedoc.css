@@ -1,0 +1,98 @@
+/* Keep the banner on top visible at all times */
+.tsd-page-toolbar.tsd-page-toolbar--hide {
+    transform: none;
+}
+.tsd-page-toolbar {
+    border-bottom: 1px solid #777777;
+}
+
+/* Hide the secondary header */
+header .tsd-page-title {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0;
+    margin-bottom: 75px;
+}
+.tsd-navigation.secondary li.current {
+    margin-top: 0;
+}
+
+/* Move the menu to the left */
+.container.container-main .row {
+    flex-direction: row-reverse;
+}
+html.default .tsd-navigation {
+    padding-left:0;
+    padding-right:10px;
+    margin-left: 0;
+}
+
+/* Remove spacing and LEGEND from the footer */
+.container-main {
+    padding-bottom: 50px;
+}
+footer {
+    display: none;
+}
+
+/* Remove the "Globals" section header */
+.tsd-navigation.primary {
+    display: none;
+}
+
+/* Don't highlight menu items */
+.tsd-navigation ul li.focus .tsd-kind-icon, .tsd-navigation.secondary ul.current a {
+    border-color: #ffffffff;
+}
+
+/* Hide flags */
+.tsd-flag {
+    display: none;
+}
+
+/* Add categories to the menu */
+.tsd-navigation li.tsd-kind-class:first-child:before, .tsd-navigation li:not(.tsd-kind-class) + li.tsd-kind-class:before {
+    content : "Classes";
+}
+.tsd-navigation li.tsd-kind-function:first-child:before, .tsd-navigation li:not(.tsd-kind-function) + li.tsd-kind-function:before {
+    content : "Functions";
+}
+.tsd-navigation li.tsd-kind-interface:first-child:before, .tsd-navigation li:not(.tsd-kind-interface) + li.tsd-kind-interface:before {
+    content : "Interfaces";
+}
+.tsd-navigation li.tsd-kind-type-alias:first-child:before, .tsd-navigation li:not(.tsd-kind-type-alias) + li.tsd-kind-type-alias:before {
+    content : "Type aliases";
+}
+.tsd-navigation li.tsd-kind-variable:first-child:before, .tsd-navigation li:not(.tsd-kind-variable) + li.tsd-kind-variable:before {
+    content : "Variables";
+}
+.tsd-navigation li.tsd-kind-class:first-child:before, .tsd-navigation li:not(.tsd-kind-class) + li.tsd-kind-class:before,
+.tsd-navigation li.tsd-kind-function:first-child:before, li:not(.tsd-kind-function) + li.tsd-kind-function:before,
+.tsd-navigation li.tsd-kind-interface:first-child:before, .tsd-navigation li:not(.tsd-kind-interface) + li.tsd-kind-interface:before,
+.tsd-navigation li.tsd-kind-type-alias:first-child:before, .tsd-navigation li:not(.tsd-kind-type-alias) + li.tsd-kind-type-alias:before,
+.tsd-navigation li.tsd-kind-variable:first-child:before, .tsd-navigation li:not(.tsd-kind-variable) + li.tsd-kind-variable:before {
+    font-weight: bold;
+    white-space:pre;
+    display: block;
+    background-color: #dddddd;
+    margin-bottom: 1em;
+    padding: 0.3em 0 0.3em 27px;
+    border-top: 1px solid #666666;
+    border-bottom: 1px solid #666666;
+}
+.tsd-navigation li:not(:first-child).tsd-kind-class:before,
+.tsd-navigation li:not(:first-child).tsd-kind-function::before,
+.tsd-navigation li:not(:first-child).tsd-kind-interface::before,
+.tsd-navigation li:not(:first-child).tsd-kind-type-alias:before,
+.tsd-navigation li:not(:first-child).tsd-kind-variable::before {
+    margin-top: 1em;
+}
+
+.col-menu nav ul + ul {
+    margin-top: 1em;
+}
+
+.tsd-navigation ul.current {
+    background-color: #feffa8;
+    padding-bottom: 1px;
+}
