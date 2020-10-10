@@ -28,7 +28,9 @@ JEST=jest
 test : build/test/unit-test.js
 	echo Running unit tests
 	echo
-	$(JEST) --coverage --coverageDirectory=build/test/coverage/unit $^
+	$(JEST) $^
+	# --silent
+	# --coverage --coverageDirectory=build/test/coverage/unit
 
 build/test/unit-test.js : $(LIBRARY_SOURCES) $(UNIT_TEST_SOURCES)
 	echo $@
