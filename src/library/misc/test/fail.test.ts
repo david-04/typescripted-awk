@@ -1,4 +1,4 @@
-testSuite('misc', 'error', () => {
+testGroup('misc', 'error', () => {
 
     //------------------------------------------------------------------------------------------------------------------
     // Test setup
@@ -39,7 +39,7 @@ testSuite('misc', 'error', () => {
     testTemplate((parameter?: type.ValueOrSupplier<string | Error>) => ({
         group: 'fail()',
         description: 'fail($*)',
-        action: () => undefined === parameter ? fail() : fail(parameter)
+        action: () => undefined === parameter ? fail() : fail(parameter as any)
     }))
         .when(undefined)/*          */.throwsError(new Error(''))
         .when('')/*                 */.throwsError(new Error(''))

@@ -127,15 +127,11 @@ class TestTemplate<R> extends Checks<R>{
     // Create nested "describe" blocks and run the given test inside.
     //------------------------------------------------------------------------------------------------------------------
 
-    private runInCategory(description: string, action: type.Action, groupOffset = 0): this {
-
-        if (groupOffset < this.groups.length) {
-            describe(
-                this.groups[groupOffset],
-                () => { this.runInCategory(description, action, groupOffset + 1) }
-            );
+    private runInCategory(description: string, action: type.Action, offset = 0): this {
+        if (offset < this.groups.length) {
+            testGroup(this.groups[offset], () => this.runInCategory(description, action, offset + 1));
         } else {
-            test(description, action);
+            testCase(description, action);
         }
         return this;
     }

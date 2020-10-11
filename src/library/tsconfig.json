@@ -91,18 +91,28 @@
   "files" : [
 
     //------------------------------------------------------------------------------------------------------------------
-    // Basic infrastructure
+    // Bootstrap
     //------------------------------------------------------------------------------------------------------------------
 
     "internal/internal-namespace.ts",
     "data/generic-function-types.ts",
+    "internal/test-tools/source-map-support.ts",
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Test framework
+    //------------------------------------------------------------------------------------------------------------------
+
+    "internal/test-tools/test-backend.ts",
+    "internal/test-tools/test-group.ts",
+    "internal/test-tools/test-case.ts",
+
+    "internal/test-tools/expect.ts",
 
     "internal/test-tools/values.ts",
-    "internal/test-tools/test-suite.ts",
     "internal/test-tools/test-template.ts",
     "internal/test-tools/checks.ts",
 
     "misc/fail.ts",
-    "misc/test/fail.test.ts"
+    "misc/test/fail.test.ts",
   ]
 }

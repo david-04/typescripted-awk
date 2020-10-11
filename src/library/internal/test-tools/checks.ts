@@ -18,7 +18,7 @@ abstract class Checks<R> {
     public returns(expectedValue: R): this {
         return this.runTestAndValidateResult(
             `returns ${stringifyValue(expectedValue)}`,
-            result => expect(result).toBe(expectedValue instanceof Value ? expectedValue.value : expectedValue)
+            result => expect(result).toBeEqualTo(expectedValue instanceof Value ? expectedValue.value : expectedValue)
         );
     }
 
@@ -30,7 +30,7 @@ abstract class Checks<R> {
         return this.runTestAndValidateError(
             `throws ${stringifyErrorForDisplay(expectedError)}`,
             actualError => expect(stringifyErrorForComparison(actualError))
-                .toEqual(stringifyErrorForComparison(expectedError))
+                .toBeEqualTo(stringifyErrorForComparison(expectedError))
         );
     }
 }

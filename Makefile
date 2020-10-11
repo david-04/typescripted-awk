@@ -23,14 +23,13 @@ LIBRARY_SOURCES=$(filter-out $(UNIT_TEST_SOURCES), $(wildcard $(foreach folder, 
 # Unit tests
 #-----------------------------------------------------------------------------------------------------------------------
 
-JEST=jest
+JEST=jest --silent --coverage --coverageDirectory=build/test/coverage/unit
+JASMINE=jasmine
+TEST_BACKEND=$(JASMINE)
 
 test : build/test/unit-test.js
 	echo Running unit tests
-	echo
-	$(JEST) $^
-	# --silent
-	# --coverage --coverageDirectory=build/test/coverage/unit
+	$(TEST_BACKEND) $^
 
 build/test/unit-test.js : $(LIBRARY_SOURCES) $(UNIT_TEST_SOURCES)
 	echo $@
