@@ -9,16 +9,16 @@
 
     // "incremental": true,                         // Enable incremental compilation
        "target": "es5",                             // Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'.
-       "module": "none",                            // Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'.
+       "module": "commonjs",                        // Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'.
     // "lib": [],                                   // Specify library files to be included in the compilation.
        "allowJs": false,                            // Allow javascript files to be compiled.
     // "checkJs": true,                             // Report errors in .js files.
     // "jsx": "preserve",                           // Specify JSX code generation: 'preserve', 'react-native', or 'react'.
        "declaration": false,                        // Generates corresponding '.d.ts' file.
        "declarationMap": false,                     // Generates a sourcemap for each corresponding '.d.ts' file.
-       "sourceMap": true,                           // Generates corresponding '.map' file.
-       "outFile": "../../build/test/unit-test.js",  // Concatenate and emit output to single file.
-    // "outDir": "./out",                           // Redirect output structure to the directory.
+       "sourceMap": false,                          // Generates corresponding '.map' file.
+    // "outFile": "../../build/test/unit-test.js",  // Concatenate and emit output to single file.
+       "outDir": "../../build/scripts",             // Redirect output structure to the directory.
     // "rootDir": "./",                             // Specify the root directory of input files. Use to control the output directory structure with --outDir.
     // "composite": true,                           // Enable project compilation
     // "tsBuildInfoFile": "./",                     // Specify file to store incremental compilation information
@@ -87,32 +87,5 @@
 
        "skipLibCheck": true,                        // Skip type checking of declaration files.
        "forceConsistentCasingInFileNames": true     // Disallow inconsistently-cased references to the same file.
-  },
-  "files" : [
-
-    //------------------------------------------------------------------------------------------------------------------
-    // Bootstrap
-    //------------------------------------------------------------------------------------------------------------------
-
-    "internal/internal-namespace.ts",
-    "data/generic-function-types.ts",
-    "internal/test-tools/source-map-support.ts",
-
-    //------------------------------------------------------------------------------------------------------------------
-    // Test framework
-    //------------------------------------------------------------------------------------------------------------------
-
-    "internal/test-tools/test-backend.ts",
-    "internal/test-tools/test-group.ts",
-    "internal/test-tools/test-case.ts",
-
-    "internal/test-tools/expect.ts",
-
-    "internal/test-tools/values.ts",
-    "internal/test-tools/test-template.ts",
-    "internal/test-tools/checks.ts",
-
-    "misc/fail.ts",
-    "misc/test/fail.test.ts"
-  ]
+  }
 }
