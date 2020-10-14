@@ -4,8 +4,8 @@
 
 abstract class TestBackend {
 
-    public abstract testGroup(description: string, action: type.Action): void;
-    public abstract testCase(description: string, action: type.Action): void;
+    public abstract testGroup(description: string, action: internal.Action): void;
+    public abstract testCase(description: string, action: internal.Action): void;
     public abstract assertEquals(actualValue: any, expectedValue: any): void;
 }
 
@@ -23,12 +23,12 @@ class Jest extends TestBackend {
         return 0 < process.argv.filter(argument => argument.match(/jest/i)).length;
     }
 
-    public testGroup(description: string, action: type.Action): void {
+    public testGroup(description: string, action: internal.Action): void {
 
         this.describe(description, () => { action() });
     }
 
-    public testCase(description: string, action: type.Action): void {
+    public testCase(description: string, action: internal.Action): void {
         this.test(description, () => { action() });
     }
 
@@ -51,11 +51,11 @@ class Jasmine extends TestBackend {
         return 0 < process.argv.filter(argument => argument.match(/jasmine/i)).length;
     }
 
-    public testGroup(description: string, action: type.Action) {
+    public testGroup(description: string, action: internal.Action) {
         this.describe(`${description} =>`, () => { action() });
     }
 
-    public testCase(description: string, action: type.Action) {
+    public testCase(description: string, action: internal.Action) {
         this.it(description, () => { action() });
     }
 

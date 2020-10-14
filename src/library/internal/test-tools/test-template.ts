@@ -16,7 +16,7 @@ class TestTemplate<R> extends Checks<R>{
     //------------------------------------------------------------------------------------------------------------------
 
     public constructor(
-        protected readonly descriptorSupplier: type.Supplier<TestDescriptor<R>>,
+        protected readonly descriptorSupplier: internal.Supplier<TestDescriptor<R>>,
         ...parameters: Array<any>
     ) {
         super();
@@ -97,7 +97,7 @@ class TestTemplate<R> extends Checks<R>{
     // Run the test with the given check.
     //------------------------------------------------------------------------------------------------------------------
 
-    protected runTestAndValidateResult(description: string, validation: type.Consumer<R>): this {
+    protected runTestAndValidateResult(description: string, validation: internal.Consumer<R>): this {
         return this.runInCategory(`${this.description} ${description}`, () => {
             validation((this.descriptorSupplier as Function)(...this.parameters).action())
         });
@@ -107,7 +107,7 @@ class TestTemplate<R> extends Checks<R>{
     // Run the test, expect an error and pass it to the given consumer.
     //------------------------------------------------------------------------------------------------------------------
 
-    protected runTestAndValidateError(description: string, validation: type.Consumer<Error>): this {
+    protected runTestAndValidateError(description: string, validation: internal.Consumer<Error>): this {
         return this.runInCategory(`${this.description} ${description}`, () => {
             let hasFailed = true;
             try {
@@ -127,7 +127,7 @@ class TestTemplate<R> extends Checks<R>{
     // Create nested "describe" blocks and run the given test inside.
     //------------------------------------------------------------------------------------------------------------------
 
-    private runInCategory(description: string, action: type.Action, offset = 0): this {
+    private runInCategory(description: string, action: internal.Action, offset = 0): this {
         if (offset < this.groups.length) {
             testGroup(this.groups[offset], () => this.runInCategory(description, action, offset + 1));
         } else {
@@ -142,7 +142,7 @@ class TestTemplate<R> extends Checks<R>{
 //----------------------------------------------------------------------------------------------------------------------
 
 class TestTemplate0<R> extends TestTemplate<R> {
-    public constructor(actionDescriptorSupplier: type.Supplier<TestDescriptor<R>>) {
+    public constructor(actionDescriptorSupplier: internal.Supplier<TestDescriptor<R>>) {
         super(actionDescriptorSupplier)
     }
     public when(): this {
@@ -209,25 +209,25 @@ class TestTemplate9<T1, T2, T3, T4, T5, T6, T7, T8, T9, R> extends TestTemplate<
 //----------------------------------------------------------------------------------------------------------------------
 
 interface TestDescriptor<R> {
-    group?: type.ValueOrArray<string>
+    group?: internal.ValueOrArray<string>
     description: string;
-    action: type.Supplier<R>
+    action: internal.Supplier<R>
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 // Factory methods for test templates.
 //----------------------------------------------------------------------------------------------------------------------
 
-type TestActionSupplier0<R> = type.Supplier<TestDescriptor<R>>;
-type TestActionSupplier1<T1, R> = type.Function1<T1, TestDescriptor<R>>;
-type TestActionSupplier2<T1, T2, R> = type.Function2<T1, T2, TestDescriptor<R>>;
-type TestActionSupplier3<T1, T2, T3, R> = type.Function3<T1, T2, T3, TestDescriptor<R>>;
-type TestActionSupplier4<T1, T2, T3, T4, R> = type.Function4<T1, T2, T3, T4, TestDescriptor<R>>;
-type TestActionSupplier5<T1, T2, T3, T4, T5, R> = type.Function5<T1, T2, T3, T4, T5, TestDescriptor<R>>;
-type TestActionSupplier6<T1, T2, T3, T4, T5, T6, R> = type.Function6<T1, T2, T3, T4, T5, T6, TestDescriptor<R>>;
-type TestActionSupplier7<T1, T2, T3, T4, T5, T6, T7, R> = type.Function7<T1, T2, T3, T4, T5, T6, T7, TestDescriptor<R>>;
-type TestActionSupplier8<T1, T2, T3, T4, T5, T6, T7, T8, R> = type.Function8<T1, T2, T3, T4, T5, T6, T7, T8, TestDescriptor<R>>;
-type TestActionSupplier9<T1, T2, T3, T4, T5, T6, T7, T8, T9, R> = type.Function9<T1, T2, T3, T4, T5, T6, T7, T8, T9, TestDescriptor<R>>;
+type TestActionSupplier0<R> = internal.Supplier<TestDescriptor<R>>;
+type TestActionSupplier1<T1, R> = internal.Function1<T1, TestDescriptor<R>>;
+type TestActionSupplier2<T1, T2, R> = internal.Function2<T1, T2, TestDescriptor<R>>;
+type TestActionSupplier3<T1, T2, T3, R> = internal.Function3<T1, T2, T3, TestDescriptor<R>>;
+type TestActionSupplier4<T1, T2, T3, T4, R> = internal.Function4<T1, T2, T3, T4, TestDescriptor<R>>;
+type TestActionSupplier5<T1, T2, T3, T4, T5, R> = internal.Function5<T1, T2, T3, T4, T5, TestDescriptor<R>>;
+type TestActionSupplier6<T1, T2, T3, T4, T5, T6, R> = internal.Function6<T1, T2, T3, T4, T5, T6, TestDescriptor<R>>;
+type TestActionSupplier7<T1, T2, T3, T4, T5, T6, T7, R> = internal.Function7<T1, T2, T3, T4, T5, T6, T7, TestDescriptor<R>>;
+type TestActionSupplier8<T1, T2, T3, T4, T5, T6, T7, T8, R> = internal.Function8<T1, T2, T3, T4, T5, T6, T7, T8, TestDescriptor<R>>;
+type TestActionSupplier9<T1, T2, T3, T4, T5, T6, T7, T8, T9, R> = internal.Function9<T1, T2, T3, T4, T5, T6, T7, T8, T9, TestDescriptor<R>>;
 
 
 //function testTemplate<R>(action: TestDescriptor<R>): TestTemplate0<R>;

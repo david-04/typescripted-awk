@@ -19,7 +19,7 @@ testGroup('misc', 'error', () => {
     // createError()
     //------------------------------------------------------------------------------------------------------------------
 
-    type CreateErrorParam = type.ValueOrSupplier<string | Error>;
+    type CreateErrorParam = internal.ValueOrSupplier<string | Error>;
 
     testTemplate((p1?: CreateErrorParam, p2?: CreateErrorParam, p3?: CreateErrorParam) => ({
         group: 'createError()',
@@ -36,7 +36,7 @@ testGroup('misc', 'error', () => {
     // fail()
     //------------------------------------------------------------------------------------------------------------------
 
-    testTemplate((parameter?: type.ValueOrSupplier<string | Error>) => ({
+    testTemplate((parameter?: internal.ValueOrSupplier<string | Error>) => ({
         group: 'fail()',
         description: 'fail($*)',
         action: () => undefined === parameter ? fail() : fail(parameter as any)

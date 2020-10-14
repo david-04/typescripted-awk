@@ -8,8 +8,8 @@ abstract class Checks<R> {
     // Callback to actually run the test.
     //------------------------------------------------------------------------------------------------------------------
 
-    protected abstract runTestAndValidateResult(description: string, validation: type.Consumer<R>): this;
-    protected abstract runTestAndValidateError(description: string, validation: type.Consumer<Error>): this;
+    protected abstract runTestAndValidateResult(description: string, validation: internal.Consumer<R>): this;
+    protected abstract runTestAndValidateError(description: string, validation: internal.Consumer<Error>): this;
 
     //------------------------------------------------------------------------------------------------------------------
     // Verify that a specific value is returned.

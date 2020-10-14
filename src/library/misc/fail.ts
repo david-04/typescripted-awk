@@ -2,7 +2,7 @@
 // Create an error message
 //----------------------------------------------------------------------------------------------------------------------
 
-function createError(...messagesErrorsOrSuppliers: type.ValueOrSupplier<string | Error>[]) {
+function createError(...messagesErrorsOrSuppliers: internal.ValueOrSupplier<string | Error>[]) {
 
     let error: Error | undefined;
     for (let index = 0; index < messagesErrorsOrSuppliers.length && !error; index++) {
@@ -43,7 +43,7 @@ function fail(message: string): never;
 // @level 3
 //----------------------------------------------------------------------------------------------------------------------
 
-function fail(supplier: type.Supplier<string | Error>): never;
+function fail(supplier: internal.Supplier<string | Error>): never;
 
 //----------------------------------------------------------------------------------------------------------------------
 // Throw an error.
@@ -51,7 +51,7 @@ function fail(supplier: type.Supplier<string | Error>): never;
 // @level 3
 //----------------------------------------------------------------------------------------------------------------------
 
-function fail(messageErrorOrSupplier?: type.ValueOrSupplier<string | Error>): never {
+function fail(messageErrorOrSupplier?: internal.ValueOrSupplier<string | Error>): never {
     const error = messageErrorOrSupplier ? createError(messageErrorOrSupplier) : createError();
     Error.captureStackTrace(error, fail);
     throw error;
