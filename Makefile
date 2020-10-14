@@ -4,6 +4,7 @@
 
 help :
 	echo.
+	echo lib .............. Build the library
 	echo test ............. Run all tests
 	echo typedoc .......... Generate the API documentation
 	echo clean ............ Delete temporary files
@@ -30,6 +31,15 @@ LIBRARY_SOURCES=$(filter-out $(UNIT_TEST_SOURCES), $(wildcard $(foreach folder, 
 #-----------------------------------------------------------------------------------------------------------------------
 # Library
 #-----------------------------------------------------------------------------------------------------------------------
+
+lib :  $(foreach level, $(LEVELS), build/library/tsawk-level-$(level).js);
+
+build/library/tsawk-level-%.js : build/library/tsawk.ts build/scripts/process-javadoc.js
+	echo $@
+	rm -rf build/library/level-$**
+	cp build/library/tsawk.ts build/library/tsawk-level-$*.ts
+	node build/scripts/process-javadoc.js lib $* build/library/tsawk-level-$*.ts
+	$(TSC) --declaration --module commonjs --isolatedModules --outDir build/library build/library/tsawk-level-$*.ts
 
 build/library/tsawk.ts : $(LIBRARY_SOURCES) build/scripts/get-files-from-tsconfig.js
 	echo $@
@@ -58,17 +68,17 @@ build/unit-test/unit-test.js : $(LIBRARY_SOURCES) $(UNIT_TEST_SOURCES) build/scr
 # API documentation
 #-----------------------------------------------------------------------------------------------------------------------
 
-typedoc : $(foreach level, $(LEVELS), build/api-doc/level-$(level)/index.html);
+typedoc : $(foreach level, $(LEVELS), build/typedoc/level-$(level)/index.html);
 
-build/api-doc/level-%/index.html : build/library/tsawk.ts build/scripts/process-javadoc.js
-	echo build/api-doc/level-$*.ts
-	rm -rf build/api-doc/level-$**
-	mkdir -p build/api-doc/level-$*
-	cp build/library/tsawk.ts build/api-doc/level-$*.ts
-	node build/scripts/process-javadoc.js lib $* build/api-doc/level-$*.ts
-	echo build/api-doc/level-$*.js
-	$(TSC) --declaration --module commonjs --isolatedModules --outDir build/api-doc build/api-doc/level-$*.ts
-	echo build/api-doc/level-$*/index.html
+build/typedoc/level-%/index.html : build/library/tsawk.ts build/scripts/process-javadoc.js
+	echo build/typedoc/level-$*.ts
+	rm -rf build/typedoc/level-$**
+	mkdir -p build/typedoc/level-$*
+	cp build/library/tsawk.ts build/typedoc/level-$*.ts
+	node build/scripts/process-javadoc.js doc $* build/typedoc/level-$*.ts
+	echo build/typedoc/level-$*.js
+	$(TSC) --declaration --module commonjs --isolatedModules --outDir build/typedoc build/typedoc/level-$*.ts
+	echo build/typedoc/level-$*/index.html
 	typedoc --excludeNotExported \
 			--includeDeclarations \
 			--excludeExternals \
@@ -76,10 +86,10 @@ build/api-doc/level-%/index.html : build/library/tsawk.ts build/scripts/process-
 			--name "typscripted-awk | $(VERSION)-level-$*" \
 			--disableSources \
 			--readme none \
-			--out build/api-doc/level-$* \
+			--out build/typedoc/level-$* \
 			--mode file \
-			build/api-doc/level-$*.d.ts
-	cat src/resources/typedoc.css >> build/api-doc/level-$*/assets/css/main.css
+			build/typedoc/level-$*.d.ts
+	cat src/resources/typedoc.css >> build/typedoc/level-$*/assets/css/main.css
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Build scripts
