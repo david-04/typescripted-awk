@@ -61,7 +61,7 @@ footer {
     content : "Interfaces";
 }
 .tsd-navigation li.tsd-kind-type-alias:first-child:before, .tsd-navigation li:not(.tsd-kind-type-alias) + li.tsd-kind-type-alias:before {
-    content : "Type aliases";
+    content : "Types";
 }
 .tsd-navigation li.tsd-kind-variable:first-child:before, .tsd-navigation li:not(.tsd-kind-variable) + li.tsd-kind-variable:before {
     content : "Variables";
@@ -95,4 +95,25 @@ footer {
 .tsd-navigation ul.current {
     background-color: #feffa8;
     padding-bottom: 1px;
+}
+
+/* Content section table headers */
+.tsd-panel > :first-child > :first-child > h3:first-child {
+    background-color: #cccccc;
+    margin-top: -1.3rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.tsd-index-section:not(:first-child) h3 {
+    background-color: #cccccc;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+section.tsd-member .tsd-anchor + h3 {
+    background-color: #cccccc;
+    margin-top: -1.3rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
 }

@@ -94,7 +94,6 @@
     // Bootstrap
     //------------------------------------------------------------------------------------------------------------------
 
-    "internal/internal-namespace.ts",
     "data/generic-function-types.ts",
     "internal/test-tools/source-map-support.ts",
 

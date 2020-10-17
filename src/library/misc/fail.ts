@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------------------------------------------------------
-// Create an error message
+// Create an error object.
 //----------------------------------------------------------------------------------------------------------------------
 
 function createError(...messagesErrorsOrSuppliers: internal.ValueOrSupplier<string | Error>[]) {
@@ -21,33 +21,13 @@ function createError(...messagesErrorsOrSuppliers: internal.ValueOrSupplier<stri
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Throw an error without error message.
-// @level 3
-//----------------------------------------------------------------------------------------------------------------------
-
-function fail(): never;
-
-//----------------------------------------------------------------------------------------------------------------------
-// Throw an error with the given error message.
-// @param message The error message to include.
-// @level 3
-//----------------------------------------------------------------------------------------------------------------------
-
-function fail(message: string): never;
-
-//----------------------------------------------------------------------------------------------------------------------
-// Throw the error provided by the supplier. If it returns an Error instance, the object is thrown as it is. Otherwise
-// a new Error is created and the return value of the supplier is passed to its constructor.
-// @brief Throw the error returned by the given supplier.
-// @param supplier Supplier for an error message or an Error object.
-// @level 3
-//----------------------------------------------------------------------------------------------------------------------
-
-function fail(supplier: internal.Supplier<string | Error>): never;
-
-//----------------------------------------------------------------------------------------------------------------------
-// Throw an error.
-// @param messageErrorOrSupplier An optional error message, Error object or a supplier that returns either.
+// Throw an error depending on the parameter passed:
+// - If no parameter is passed, an error without error message is thrown.
+// - If a string is supplied, it's used as the error message.
+// - If an Error object is supplied, it's thrown as it is.
+// - If a function is supplied, it's return value is either thrown (if it is an error) or used as the error message.
+// @brief Throw an error.
+// @param messageErrorOrSupplier An optional error message, Error object or a supplier that returns one of them.
 // @level 3
 //----------------------------------------------------------------------------------------------------------------------
 

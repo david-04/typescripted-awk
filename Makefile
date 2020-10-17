@@ -15,7 +15,7 @@ help :
 #-----------------------------------------------------------------------------------------------------------------------
 
 VERSION=0.0
-LEVELS=1 2 3
+LEVELS=3
 
 ECMASCRIPT_VERSION=ES5
 TSC=tsc --lib $(ECMASCRIPT_VERSION)
@@ -54,7 +54,7 @@ build/typedoc/level-%/index.html : build/library/tsawk.ts build/scripts/process-
 	cp build/library/tsawk.ts build/typedoc/level-$*.ts
 	node build/scripts/process-javadoc.js doc $* build/typedoc/level-$*.ts
 	echo build/typedoc/level-$*.js
-	$(TSC) --declaration --module commonjs --isolatedModules --outDir build/typedoc build/typedoc/level-$*.ts
+	$(TSC) --declaration --module commonjs --outDir build/typedoc build/typedoc/level-$*.ts
 	echo build/typedoc/level-$*/index.html
 	typedoc --excludeNotExported \
 			--includeDeclarations \
