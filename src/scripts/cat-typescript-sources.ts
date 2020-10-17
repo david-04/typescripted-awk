@@ -27,5 +27,7 @@ function processSourceFile(folder: string, file: string) {
     fs.readFileSync(`${folder}/${file}`, 'utf8')
         .split(/\r?\n/)
         .map((line, index) => line.replace(/__FILE__/g, file).replace(/__LINE__/g, `${index + 1}`))
+        .map(line => line.match(/reference path.*node-modules.d.ts/) ? '' : line)
+        .map(line => line.replace(/typeof\s+NodeModuleTypes\.[^\s]+/ig, 'any'))
         .forEach(line => console.log(line));
 }

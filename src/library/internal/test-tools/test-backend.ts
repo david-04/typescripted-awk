@@ -6,7 +6,6 @@ abstract class TestBackend {
 
     public abstract testGroup(description: string, action: internal.Action): void;
     public abstract testCase(description: string, action: internal.Action): void;
-    public abstract assertEquals(actualValue: any, expectedValue: any): void;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -17,7 +16,6 @@ class Jest extends TestBackend {
 
     private readonly describe = (global as any)['describe'];
     private readonly test = (global as any)['test'];
-    private readonly expect = (global as any)['expect'];
 
     public get isInUse() {
         return 0 < process.argv.filter(argument => argument.match(/jest/i)).length;
@@ -31,10 +29,6 @@ class Jest extends TestBackend {
     public testCase(description: string, action: internal.Action): void {
         this.test(description, () => { action() });
     }
-
-    public assertEquals(actualValue: any, expectedValue: any) {
-        this.expect(actualValue).toEqual(expectedValue);
-    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -45,7 +39,6 @@ class Jasmine extends TestBackend {
 
     private readonly describe = (global as any)['describe'];
     private readonly it = (global as any)['it'];
-    private readonly expect = (global as any)['expect'];
 
     public get isInUse() {
         return 0 < process.argv.filter(argument => argument.match(/jasmine/i)).length;
@@ -57,10 +50,6 @@ class Jasmine extends TestBackend {
 
     public testCase(description: string, action: internal.Action) {
         this.it(description, () => { action() });
-    }
-
-    public assertEquals(actualValue: any, expectedValue: any) {
-        this.expect(actualValue).toEqual(expectedValue);
     }
 }
 

@@ -1,3 +1,5 @@
+.SILENT :
+
 #-----------------------------------------------------------------------------------------------------------------------
 # List all targets
 #-----------------------------------------------------------------------------------------------------------------------
@@ -7,6 +9,7 @@ help :
 	echo test ............. Run all tests
 	echo typedoc .......... Generate the API documentation
 	echo package .......... Assemble the Node package
+	echo typecheck ........ Perform a test compile with node package typings
 	echo clean ............ Delete temporary files
 	echo.
 
@@ -14,7 +17,7 @@ help :
 # Settings
 #-----------------------------------------------------------------------------------------------------------------------
 
-VERSION=0.0
+VERSION=0.0.0
 LEVELS=3
 
 ECMASCRIPT_VERSION=es5
@@ -46,12 +49,12 @@ test : build/unit-test/unit-test.js
 
 build/unit-test/unit-test.js : build/unit-test/unit-test.ts
 	echo $@
-	$(TSC) --outFile $@.tmp build/unit-test/unit-test.ts
-	mv -f $@.tmp $@
+	$(TSC) --sourceMap --outDir build/unit-test/output build/unit-test/unit-test.ts
+	mv -f build/unit-test/output/unit-test.js build/unit-test/
+	rm -rf build/unit-test/output
 
 build/unit-test/unit-test.ts : build/library/tsawk.ts $(UNIT_TEST_SOURCES) build/scripts/cat-typescript-sources.js
 	echo $@
-	rm -rf build/unit-test
 	mkdir -p build/unit-test
 	cp build/library/tsawk.ts $@.tmp
 	node build/scripts/cat-typescript-sources.js src/library tsconfig.json test >> $@.tmp
@@ -97,9 +100,9 @@ library :  $(foreach level, 0 $(LEVELS) 9, \
 
 build/library/tsawk.ts : $(LIBRARY_SOURCES) build/scripts/cat-typescript-sources.js
 	echo $@
-	rm -rf build/library
 	mkdir -p build/library
-	node build/scripts/cat-typescript-sources.js src/library tsconfig.json source > $@
+	node build/scripts/cat-typescript-sources.js src/library tsconfig.json source > $@.tmp
+	mv -f $@.tmp $@
 
 build/library/tsawk-level-%.js build/library/tsawk-level-%.d.ts : build/library/tsawk.ts build/scripts/process-javadoc.js
 	echo build/library/tsawk-level-$*.js
@@ -196,6 +199,16 @@ build/package/level-%/global/index.d.ts : build/package/level-%/index.d.ts
 	echo "    }" 																>> $@.tmp
 	echo "}" 																	>> $@.tmp
 	mv -f $@.tmp $@
+
+#-----------------------------------------------------------------------------------------------------------------------
+# build/temp/typecheck.js
+#-----------------------------------------------------------------------------------------------------------------------
+
+typecheck : build/temp/typecheck.js;
+
+build/temp/typecheck.js : src/library/tsconfig.json $(UNIT_TEST_SOURCES) $(LIBRARY_SOURCES) src/library/internal/node-modules.d.ts
+	echo $@
+	$(TSC) --outFile $@ --project src/library
 
 #-----------------------------------------------------------------------------------------------------------------------
 # build/scripts

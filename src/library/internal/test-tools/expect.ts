@@ -15,7 +15,7 @@ class Expect<T> implements ExpectAny<T> {
     public constructor(public readonly value: T) { }
 
     toBeEqualTo(value: T): this {
-        testBackend.assertEquals(this.value, value);
+        nodeModules.assert.deepStrictEqual(this.value, value);
         return this;
     }
 }
