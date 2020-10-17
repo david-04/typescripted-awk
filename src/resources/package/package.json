@@ -1,0 +1,7 @@
+{
+  "name": "typescripted-awk",
+  "version": "0.0.0",
+  "description": "AWK-style library and runtime environment for TypeScript and Node",
+  "author": "David Hofmann",
+  "license": "TODO"
+}

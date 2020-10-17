@@ -4,9 +4,9 @@
 
 help :
 	echo.
-	echo lib .............. Build the library
 	echo test ............. Run all tests
 	echo typedoc .......... Generate the API documentation
+	echo package .......... Assemble the Node package
 	echo clean ............ Delete temporary files
 	echo.
 
@@ -15,7 +15,7 @@ help :
 #-----------------------------------------------------------------------------------------------------------------------
 
 VERSION=0.0
-LEVELS=3
+LEVELS=1 2 3
 
 ECMASCRIPT_VERSION=ES5
 TSC=tsc --lib $(ECMASCRIPT_VERSION)
@@ -29,30 +29,7 @@ UNIT_TEST_SOURCES=$(wildcard $(foreach folder, $(LIBRARY_FOLDERS), $(folder)/*.t
 LIBRARY_SOURCES=$(filter-out $(UNIT_TEST_SOURCES), $(wildcard $(foreach folder, $(LIBRARY_FOLDERS), $(folder)/*.ts))) src/library/tsconfig.json
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Library
-#-----------------------------------------------------------------------------------------------------------------------
-
-lib :  $(foreach level, $(LEVELS), build/library/tsawk-level-$(level).js);
-
-build/library/tsawk-level-%.js : build/library/tsawk.ts build/scripts/process-javadoc.js
-	echo $@
-	rm -rf build/library/level-$**
-	cp build/library/tsawk.ts build/library/tsawk-level-$*.ts
-	node build/scripts/process-javadoc.js lib $* build/library/tsawk-level-$*.ts
-	$(TSC) --declaration --module commonjs --isolatedModules --outDir build/library build/library/tsawk-level-$*.ts
-
-build/library/tsawk.ts : $(LIBRARY_SOURCES) build/scripts/get-files-from-tsconfig.js
-	echo $@
-	rm -rf build/library/src
-	mkdir -p build/library/src
-	node build/scripts/get-files-from-tsconfig.js src/library/tsconfig.json \
-		| grep -viE "(/test-tools/|/test/|\.test\.ts$$)" \
-		| sed 's|^|src/library/|' \
-		| xargs cat \
-		> $@
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Unit tests
+# build/unit-test
 #-----------------------------------------------------------------------------------------------------------------------
 
 test : build/unit-test/unit-test.js
@@ -65,7 +42,7 @@ build/unit-test/unit-test.js : $(LIBRARY_SOURCES) $(UNIT_TEST_SOURCES) build/scr
 	node build/scripts/process-javadoc.js test 999 $@
 
 #-----------------------------------------------------------------------------------------------------------------------
-# API documentation
+# build/typedoc
 #-----------------------------------------------------------------------------------------------------------------------
 
 typedoc : $(foreach level, $(LEVELS), build/typedoc/level-$(level)/index.html);
@@ -92,7 +69,124 @@ build/typedoc/level-%/index.html : build/library/tsawk.ts build/scripts/process-
 	cat src/resources/typedoc.css >> build/typedoc/level-$*/assets/css/main.css
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Build scripts
+# build/library
+#-----------------------------------------------------------------------------------------------------------------------
+
+library :  $(foreach level, 0 $(LEVELS) 9, \
+	build/library/tsawk-level-$(level).exports \
+    build/library/tsawk-level-$(level).d.ts \
+    build/library/tsawk-level-$(level).js \
+    build/library/tsawk-level-$(level).ts \
+);
+
+build/library/tsawk.ts : $(LIBRARY_SOURCES) build/scripts/get-files-from-tsconfig.js
+	echo $@
+	rm -rf build/library
+	mkdir -p build/library
+	node build/scripts/get-files-from-tsconfig.js src/library/tsconfig.json \
+		| grep -viE "(/test-tools/|/test/|\.test\.ts$$)" \
+		| sed 's|^|src/library/|' \
+		| xargs cat \
+		> $@
+
+build/library/tsawk-level-%.js build/library/tsawk-level-%.d.ts : build/library/tsawk.ts build/scripts/process-javadoc.js
+	echo build/library/tsawk-level-$*.js
+	rm -f build/library/level-$**
+	cp build/library/tsawk.ts build/library/tsawk-level-$*.ts
+	node build/scripts/process-javadoc.js lib $* build/library/tsawk-level-$*.ts
+	$(TSC) --declaration --module commonjs --outDir build/library build/library/tsawk-level-$*.ts
+	cat build/library/tsawk-level-$*.d.ts \
+		| sed -E "s/^\s*(declare |export )+//" \
+		| sed -E "s/^\{\};//" \
+		> build/library/tsawk-level-$*.d.ts.tmp
+	mv -f build/library/tsawk-level-$*.d.ts.tmp build/library/tsawk-level-$*.d.ts
+
+build/library/tsawk-level-%.exports : build/library/tsawk-level-%.js
+	echo $@
+	cat $^ \
+		| grep -iE "^exports\\." \
+		| grep -viE "(=.*=|void 0|__esModule|injectExports)" \
+		| sort \
+		| uniq \
+		| sed -E "s/^[^.]+\\./    '/g" \
+		| sed -E "s/\\s*=.*/',/g" \
+		| tr '\n' '\a' \
+		| sed 's/,\a$$/\a/' \
+		| sed 's/^/[\a/g' \
+		| sed 's/$$/]\a/g' \
+		| tr '\a' '\n' \
+		> $@.tmp
+	mv -f $@.tmp $@
+
+#-----------------------------------------------------------------------------------------------------------------------
+# build/package
+#-----------------------------------------------------------------------------------------------------------------------
+
+package :  $(foreach level, $(LEVELS), 				\
+	build/package/package.json		 				\
+	build/package/internal/tsawk.js 				\
+	build/package/level-$(level)/index.js 			\
+	build/package/level-$(level)/index.d.ts 		\
+	build/package/level-$(level)/global/index.js 	\
+	build/package/level-$(level)/global/index.d.ts 	\
+);
+
+build/package/package.json : src/resources/package/package.json
+	echo $@
+	mkdir -p build/package
+	cp $^ $@
+
+build/package/internal/tsawk.js : build/library/tsawk-level-9.js
+	echo $@
+	mkdir -p build/package/internal
+	cp $^ $@
+
+build/package/level-%/index.js : build/library/tsawk-level-%.exports build/library/tsawk-level-0.exports src/resources/package/index.js
+	echo $@
+	mkdir -p build/package/level-$*
+	cat src/resources/package/index.js 						    				 > $@.tmp
+	echo "tsawk.injectExports(module.exports," 									>> $@.tmp
+	cat build/library/tsawk-level-$*.exports									>> $@.tmp
+	echo "," 																	>> $@.tmp
+	cat build/library/tsawk-level-0.exports										>> $@.tmp
+	echo ");" 																	>> $@.tmp
+	mv -f $@.tmp $@
+
+build/package/level-%/global/index.js : build/library/tsawk-level-%.exports src/resources/package/index.js
+	echo $@
+	mkdir -p build/package/level-$*/global
+	cat src/resources/package/index.js | sed 's|../internal|../../internal|'	 > $@.tmp
+	echo "tsawk.injectExports(module.exports," 								    >> $@.tmp
+	cat build/library/tsawk-level-$*.exports									>> $@.tmp
+	echo "," 																	>> $@.tmp
+	cat build/library/tsawk-level-$*.exports									>> $@.tmp
+	echo ");" 																	>> $@.tmp
+	mv -f $@.tmp $@
+
+build/package/level-%/index.d.ts : build/library/tsawk-level-%.d.ts build/library/tsawk-level-0.d.ts
+	echo $@
+	mkdir -p build/package/level-$*
+	echo "declare module 'typescripted-awk/level-$*' {" 						 > $@.tmp
+	cat build/library/tsawk-level-$*.d.ts | sed 's/^/    /' 					>> $@.tmp
+	echo "    global {" 														>> $@.tmp
+	cat build/library/tsawk-level-0.d.ts | sed 's/^/        /' 					>> $@.tmp
+	echo "    }" 																>> $@.tmp
+	echo "}" 																	>> $@.tmp
+	mv -f $@.tmp $@
+
+build/package/level-%/global/index.d.ts : build/package/level-%/index.d.ts
+	echo $@
+	mkdir -p build/package/level-$*/global
+	echo "declare module 'typescripted-awk/level-$*/global' {" 				     > $@.tmp
+	cat build/library/tsawk-level-$*.d.ts | sed 's/^/    /' 					>> $@.tmp
+	echo "    global {" 														>> $@.tmp
+	cat build/library/tsawk-level-$*.d.ts | sed 's/^/        /' 				>> $@.tmp
+	echo "    }" 																>> $@.tmp
+	echo "}" 																	>> $@.tmp
+	mv -f $@.tmp $@
+
+#-----------------------------------------------------------------------------------------------------------------------
+# build/scripts
 #-----------------------------------------------------------------------------------------------------------------------
 
 build/scripts/%.js : src/scripts/%.ts src/scripts/tsconfig.json
@@ -104,4 +198,4 @@ build/scripts/%.js : src/scripts/%.ts src/scripts/tsconfig.json
 #-----------------------------------------------------------------------------------------------------------------------
 
 clean :
-	rm -r ./build
+	rm -rf ./build

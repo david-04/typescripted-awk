@@ -113,6 +113,8 @@
     "internal/test-tools/checks.ts",
 
     "misc/fail.ts",
-    "misc/test/fail.test.ts"
+    "misc/test/fail.test.ts",
+
+    "internal/inject-export.ts"
   ]
 }
