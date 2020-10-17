@@ -17,8 +17,16 @@ help :
 VERSION=0.0
 LEVELS=3
 
-ECMASCRIPT_VERSION=ES5
-TSC=tsc --lib $(ECMASCRIPT_VERSION)
+ECMASCRIPT_VERSION=es5
+TSC=tsc -t $(ECMASCRIPT_VERSION) \
+		--strict \
+		--noImplicitAny \
+		--strictNullChecks \
+		--strictFunctionTypes \
+		--strictBindCallApply \
+		--strictPropertyInitialization  \
+		--noImplicitThis \
+		--alwaysStrict
 
 JEST=jest --silent --coverage --coverageDirectory=build/test/coverage/unit
 JASMINE=jasmine
@@ -36,10 +44,18 @@ test : build/unit-test/unit-test.js
 	echo Running unit tests
 	$(RUN_TEST) $^
 
-build/unit-test/unit-test.js : $(LIBRARY_SOURCES) $(UNIT_TEST_SOURCES) build/scripts/process-javadoc.js
+build/unit-test/unit-test.js : build/unit-test/unit-test.ts
 	echo $@
-	$(TSC) --outFile $@ --project src/library
-	node build/scripts/process-javadoc.js test 999 $@
+	$(TSC) --outFile $@.tmp build/unit-test/unit-test.ts
+	mv -f $@.tmp $@
+
+build/unit-test/unit-test.ts : build/library/tsawk.ts $(UNIT_TEST_SOURCES) build/scripts/cat-typescript-sources.js
+	echo $@
+	rm -rf build/unit-test
+	mkdir -p build/unit-test
+	cp build/library/tsawk.ts $@.tmp
+	node build/scripts/cat-typescript-sources.js src/library tsconfig.json test >> $@.tmp
+	mv -f $@.tmp $@
 
 #-----------------------------------------------------------------------------------------------------------------------
 # build/typedoc
@@ -79,15 +95,11 @@ library :  $(foreach level, 0 $(LEVELS) 9, \
     build/library/tsawk-level-$(level).ts \
 );
 
-build/library/tsawk.ts : $(LIBRARY_SOURCES) build/scripts/get-files-from-tsconfig.js
+build/library/tsawk.ts : $(LIBRARY_SOURCES) build/scripts/cat-typescript-sources.js
 	echo $@
 	rm -rf build/library
 	mkdir -p build/library
-	node build/scripts/get-files-from-tsconfig.js src/library/tsconfig.json \
-		| grep -viE "(/test-tools/|/test/|\.test\.ts$$)" \
-		| sed 's|^|src/library/|' \
-		| xargs cat \
-		> $@
+	node build/scripts/cat-typescript-sources.js src/library tsconfig.json source > $@
 
 build/library/tsawk-level-%.js build/library/tsawk-level-%.d.ts : build/library/tsawk.ts build/scripts/process-javadoc.js
 	echo build/library/tsawk-level-$*.js
