@@ -15,9 +15,9 @@ function testCase(g1: string, g2: string, g3: string, g4: string, g5: string, g6
 
 function testCase(...parameters: Array<any>) {
     const firstParameter = parameters.shift();
-    if ('string' === typeof firstParameter) {
+    if ("string" === typeof firstParameter) {
         testBackend.testCase(firstParameter, () => { (testCase as any)(...parameters); });
-    } else if ('function' === typeof firstParameter) {
+    } else if ("function" === typeof firstParameter) {
         firstParameter();
     }
 }

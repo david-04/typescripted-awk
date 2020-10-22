@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import * as fs from "fs";
 
 //----------------------------------------------------------------------------------------------------------------------
 // Data types
@@ -12,7 +12,7 @@ type Comment = { description: string, annotations: Array<{ tag: string, content:
 //----------------------------------------------------------------------------------------------------------------------
 
 const parameters = {
-    type: process.argv[2] as 'doc' | 'lib' | 'test',
+    type: process.argv[2] as "doc" | "lib" | "test",
     level: parseInt(process.argv[3])
 }
 
@@ -22,7 +22,7 @@ const parameters = {
 
 for (let index = 4; index < process.argv.length; index++) {
     const file = process.argv[index];
-    const content = processFileContent(fs.readFileSync(file, 'utf8').replace(/\r/g, ''));
+    const content = processFileContent(fs.readFileSync(file, "utf8").replace(/\r/g, ""));
     fs.writeFileSync(file, content);
 }
 
@@ -51,7 +51,7 @@ function processFileContent(content: string) {
         }
     }
 
-    return segments.map(segment => segment.content).join('');
+    return segments.map(segment => segment.content).join("");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ function splitCodeAndJavaDocComments(content: string) {
     let segments = new Array<CodeSection>();
     let match: RegExpMatchArray | null = null;
 
-    segments.push({ content: '', isComment: false });
+    segments.push({ content: "", isComment: false });
     while (match = content.match(/((^|\n)[ \t]*\/\/[^\n]*)+|(^|\n)[ \t]*\/\*\*([^*]|\*[^/])*\*\//)) {
         if (0 < match.index!) {
             segments.push({ content: content.substr(0, match.index!), isComment: false });
@@ -101,7 +101,7 @@ function removeEmptyLinesAfterComments(sections: Array<CodeSection>) {
 
     for (let index = 1; index < sections.length; index++) {
         if (sections[index - 1].isComment) {
-            sections[index].content = sections[index].content.replace(/^([ \t]*\n)+/, '\n');
+            sections[index].content = sections[index].content.replace(/^([ \t]*\n)+/, "\n");
         }
     }
 }
@@ -127,7 +127,7 @@ function removeCommentsWithoutCode(sections: Array<CodeSection>) {
 
 function transformComment(content: string) {
 
-    const indent = content.match(/^\s*/)![0] ?? '';
+    const indent = content.match(/^\s*/)![0] ?? "";
     content = content.substr(indent.length);
     content = removeCommentDelimiters(content);
     const comment = splitCommentIntoDescriptionAndTags(content);
@@ -143,17 +143,17 @@ function removeCommentDelimiters(comment: string) {
 
     if (comment.match(/^\/\//)) {
         return comment
-            .replace(/^\/\/[ \t]?(-{10,})?/, '')
-            .replace(/\n[ \t]*\/\/[ \t]?(-{10,})?/g, '\n')
+            .replace(/^\/\/[ \t]?(-{10,})?/, "")
+            .replace(/\n[ \t]*\/\/[ \t]?(-{10,})?/g, "\n")
             .trim();
     } else if (comment.match(/^\/\*/)) {
         return comment
-            .replace(/^\/\*\*?[ \t]?/, '')
-            .replace(/\*\/$/, '')
-            .replace(/\n[ \t]*\*[ \t]?/g, '\n')
+            .replace(/^\/\*\*?[ \t]?/, "")
+            .replace(/\*\/$/, "")
+            .replace(/\n[ \t]*\*[ \t]?/g, "\n")
             .trim();
     } else {
-        throw new Error('Unable to determine the comment type (// or /* */)')
+        throw new Error("Unable to determine the comment type (// or /* */)")
     }
 }
 
@@ -163,20 +163,20 @@ function removeCommentDelimiters(comment: string) {
 
 function splitCommentIntoDescriptionAndTags(content: string) {
 
-    let description = '';
+    let description = "";
     const annotations = new Array<{ tag: string, content: string }>();
 
-    const lines = content.split('\n');
+    const lines = content.split("\n");
     for (let index = 0; index < lines.length; index++) {
         if (lines[index].match(/^\s*@[a-z]+(\s|$)/i)) {
             annotations.push({
-                tag: lines[index].replace(/^\s*/, '').replace(/\s.*/, '').trim(),
-                content: lines[index].replace(/^\s*@[a-z]+\s+/i, '').trim()
+                tag: lines[index].replace(/^\s*/, "").replace(/\s.*/, "").trim(),
+                content: lines[index].replace(/^\s*@[a-z]+\s+/i, "").trim()
             });
         } else if (annotations.length) {
             annotations[annotations.length - 1].content += `\n${lines[index]}`;
         } else {
-            description += (description ? '\n' : '') + lines[index];
+            description += (description ? "\n" : "") + lines[index];
         }
     }
 
@@ -202,8 +202,8 @@ function processTags(comment: Comment) {
 function processBriefTag(comment: Comment) {
 
     for (let index = 0; index < comment.annotations.length; index++) {
-        if ('@brief' === comment.annotations[index].tag) {
-            if ('doc' !== parameters.type) {
+        if ("@brief" === comment.annotations[index].tag) {
+            if ("doc" !== parameters.type) {
                 comment.description = comment.annotations[index].content;
             }
             comment.annotations.splice(index, 1);
@@ -220,12 +220,12 @@ function processLevelTag(comment: Comment) {
     let mustExport = false;
 
     for (let index = 0; index < comment.annotations.length; index++) {
-        if ('@level' === comment.annotations[index].tag) {
+        if ("@level" === comment.annotations[index].tag) {
             const level = comment.annotations[index].content.trim();
             if (!level.match(/^[0-9]+$/)) {
                 throw new Error(`Unknown value for @level ${level}`);
             }
-            mustExport ||= 'test' !== parameters.type && parseInt(level) <= parameters.level;
+            mustExport ||= "test" !== parameters.type && parseInt(level) <= parameters.level;
             comment.annotations.splice(index, 1);
         }
     }
@@ -239,10 +239,10 @@ function processLevelTag(comment: Comment) {
 
 function validateTags(usedTags: Array<string>) {
 
-    const knownTags = ['param', 'returns', 'trows'];
-    const unknownTags = usedTags.filter(tag => !knownTags.filter(knownTag => `@${knownTag}` === tag).length).join(', ');
+    const knownTags = ["param", "returns", "trows"];
+    const unknownTags = usedTags.filter(tag => !knownTags.filter(knownTag => `@${knownTag}` === tag).length).join(", ");
     if (unknownTags.length) {
-        throw new Error(`Unsupported tag${1 === unknownTags.length ? '' : 's'}: ${unknownTags}`)
+        throw new Error(`Unsupported tag${1 === unknownTags.length ? "" : "s"}: ${unknownTags}`)
     }
 }
 
@@ -252,14 +252,14 @@ function validateTags(usedTags: Array<string>) {
 
 function renderComment(comment: Comment, indent: string) {
 
-    const tags = comment.annotations.map(annotation => `\n${annotation.tag} ${annotation.content.trim()}`).join('');
+    const tags = comment.annotations.map(annotation => `\n${annotation.tag} ${annotation.content.trim()}`).join("");
     const content = `${comment.description}${tags}`.trim();
-    if (0 <= content.indexOf('\n')) {
+    if (0 <= content.indexOf("\n")) {
         return content.replace(/^/, `${indent}/**\n`).replace(/\n/g, `\n${indent} * `).replace(/$/, `\n${indent} */`);
     } else if (content.trim()) {
         return `/** ${content.trim()} */`;
     } else {
-        return '';
+        return "";
     }
 }
 
@@ -270,7 +270,7 @@ function renderComment(comment: Comment, indent: string) {
 function insertExportStatement(content: string) {
 
     const match = content.match(/[^\s]/);
-    if (match && 'number' === typeof match.index) {
+    if (match && "number" === typeof match.index) {
         content = `${content.substr(0, match.index)}export ${content.substr(match.index)}`;
     }
     return content;

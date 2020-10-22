@@ -14,8 +14,8 @@ abstract class TestBackend {
 
 class Jest extends TestBackend {
 
-    private readonly describe = (global as any)['describe'];
-    private readonly test = (global as any)['test'];
+    private readonly describe = (global as any)["describe"];
+    private readonly test = (global as any)["test"];
 
     public get isInUse() {
         return 0 < process.argv.filter(argument => argument.match(/jest/i)).length;
@@ -37,8 +37,8 @@ class Jest extends TestBackend {
 
 class Jasmine extends TestBackend {
 
-    private readonly describe = (global as any)['describe'];
-    private readonly it = (global as any)['it'];
+    private readonly describe = (global as any)["describe"];
+    private readonly it = (global as any)["it"];
 
     public get isInUse() {
         return 0 < process.argv.filter(argument => argument.match(/jasmine/i)).length;

@@ -8,7 +8,7 @@ class Value<T> {
 
     public constructor(public readonly value: T) {
         this._displayValue = stringifyValue(value);
-        if ('function' === typeof value) {
+        if ("function" === typeof value) {
             if (value.name) {
                 this._displayValue = value.name;
             } else if (value.toString()) {
@@ -44,22 +44,22 @@ function stringifyValue(value: any) {
         return value.displayName;
     }
     if (undefined === value) {
-        return 'undefined';
+        return "undefined";
     } else if (null === value) {
-        return 'null';
-    } else if ('number' === typeof value && isNaN(value)) {
-        return 'NaN';
+        return "null";
+    } else if ("number" === typeof value && isNaN(value)) {
+        return "NaN";
     } else if (Infinity === value) {
-        return 'Infinity';
+        return "Infinity";
     } else if (-Infinity === value) {
-        return '-Infinity'
+        return "-Infinity"
     } else if (value instanceof RegExp) {
         return `/${value.source}/${value.flags}`;
-    } else if ('string' === typeof value) {
+    } else if ("string" === typeof value) {
         let asString = JSON.stringify(value);
-        if (2 === asString.replace(/[^"]/g, '').length) {
+        if (2 === asString.replace(/[^"]/g, "").length) {
             asString = asString.replace(/"/g, "'");
-        } else if (0 === asString.replace(/[^`]/g, '').length && asString.indexOf('${') < 0) {
+        } else if (0 === asString.replace(/[^`]/g, "").length && asString.indexOf("${") < 0) {
             asString = asString.replace(/"/g, "`");
         }
         return asString;
@@ -77,13 +77,13 @@ function stringifyErrorForComparison(error: any) {
         error = error.value;
     }
     if (undefined === error) {
-        return 'undefined';
+        return "undefined";
     } else if (null === error) {
-        return 'null';
+        return "null";
     } else if (error instanceof Error) {
         const prototype = error?.constructor?.name;
         if (error.message) {
-            return `${prototype || Error}('${error.message}')`;
+            return `${prototype || Error}("${error.message}")`;
         } else {
             return `${prototype || Error}()`;
         }

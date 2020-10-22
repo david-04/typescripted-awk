@@ -17,7 +17,7 @@ function isNotNull<T>(value: T | undefined | null): value is T {
 //----------------------------------------------------------------------------------------------------------------------
 
 function isBoolean(value: boolean | undefined | null): value is boolean {
-    return 'boolean' === typeof value;
+    return "boolean" === typeof value;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ function isBoolean(value: boolean | undefined | null): value is boolean {
 //----------------------------------------------------------------------------------------------------------------------
 
 function isNumber(value: number | undefined | null): value is number {
-    return 'number' === typeof value;
+    return "number" === typeof value;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ function isNumber(value: number | undefined | null): value is number {
 //----------------------------------------------------------------------------------------------------------------------
 
 function isString(value: string | undefined | null): value is string {
-    return 'string' === typeof value;
+    return "string" === typeof value;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ function isString(value: string | undefined | null): value is string {
 //----------------------------------------------------------------------------------------------------------------------
 
 function isObject<T extends object>(value: T | undefined | null): value is T {
-    return null !== value && 'object' === typeof value;
+    return null !== value && "object" === typeof value;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

@@ -30,7 +30,7 @@ function recursiveClone(value: any, stack: Array<{ value: any, clone: any }>) {
             clone = Object.create(Object.getPrototypeOf(value));
             stack.push({ value: value, clone });
             for (const key in value) {
-                if ('constructor' !== key) {
+                if ("constructor" !== key) {
                     clone[key] = recursiveClone(value[key], stack);
                 }
             }

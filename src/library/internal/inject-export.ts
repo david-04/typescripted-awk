@@ -16,7 +16,7 @@ function injectExportedItems(target: any, items: Array<string>) {
         if (module.exports[item]) {
             target[item] = module.exports[item];
         } else {
-            throw new Error(`Failed to export '${item}' - the item does not exist`);
+            throw new Error(`Failed to export "${item}" - the item does not exist`);
         }
     }
 }

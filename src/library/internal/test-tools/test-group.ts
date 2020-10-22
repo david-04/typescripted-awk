@@ -14,18 +14,18 @@ function testGroup(g1: string, g2: string, g3: string, g4: string, g5: string, g
 
 function testGroup(...parameters: Array<any>) {
     let firstParameter = parameters.shift();
-    if ('string' === typeof firstParameter) {
-        if (0 <= firstParameter.indexOf('/')) {
+    if ("string" === typeof firstParameter) {
+        if (0 <= firstParameter.indexOf("/")) {
             const segments = firstParameter.split(/\s*\/\s*/).filter(segment => segment.length);
             if (segments.length) {
-                firstParameter = segments.shift() ?? '';
+                firstParameter = segments.shift() ?? "";
                 parameters = [...segments, ...parameters]
             }
         }
-        testBackend.testGroup(`${firstParameter.replace(/\.test\.ts$$/, '')}`, () => {
+        testBackend.testGroup(`${firstParameter.replace(/\.test\.ts$$/, "")}`, () => {
             (testGroup as any)(...parameters);
         });
-    } else if ('function' === typeof firstParameter) {
+    } else if ("function" === typeof firstParameter) {
         firstParameter();
     }
 }

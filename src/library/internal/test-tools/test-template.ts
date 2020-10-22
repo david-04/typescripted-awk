@@ -5,7 +5,7 @@
 class TestTemplate<R> extends Checks<R>{
 
     private readonly parameters: Array<any>;
-    private description = '';
+    private description = "";
     private descriptor: TestDescriptor<R>;
     private groups: Array<string>;
 
@@ -37,7 +37,7 @@ class TestTemplate<R> extends Checks<R>{
     private replacePlaceholderValues(description: string, parameters: Array<any>) {
 
         let input = this.replaceRestPlaceholder(description, parameters);
-        let output = '';
+        let output = "";
 
         while (input) {
             const match = input.match(/\$[$0-9]+/);
@@ -45,14 +45,14 @@ class TestTemplate<R> extends Checks<R>{
                 const placeholder = match[0];
                 output += input.substr(0, match.index);
                 input = input.substr(match.index + placeholder.length)
-                if (placeholder !== '$$') {
+                if (placeholder !== "$$") {
                     output += stringifyValue(parameters[parseInt(placeholder.substr(1)) - 1]);
                 } else {
                     output += placeholder;
                 }
             } else {
                 output += input;
-                input = '';
+                input = "";
             }
         }
 
@@ -65,11 +65,11 @@ class TestTemplate<R> extends Checks<R>{
 
     private replaceRestPlaceholder(description: string, parameters: Array<any>) {
 
-        if (description.indexOf('$*') < 0) {
+        if (description.indexOf("$*") < 0) {
             return description;
         }
 
-        description = description.replace(/\$\$/g, '__PRESERVE__DOLLAR__DOLLAR__');
+        description = description.replace(/\$\$/g, "__PRESERVE__DOLLAR__DOLLAR__");
 
         parameters = parameters.slice(0);
         while (parameters.length && undefined === parameters[parameters.length - 1]) {
@@ -88,7 +88,7 @@ class TestTemplate<R> extends Checks<R>{
             }
         }
 
-        return description.replace(/\$\*/g, parameters.join(', ')).replace(/__PRESERVE__DOLLAR__DOLLAR__/g, '$$');
+        return description.replace(/\$\*/g, parameters.join(", ")).replace(/__PRESERVE__DOLLAR__DOLLAR__/g, "$$");
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ class TestTemplate<R> extends Checks<R>{
                 validation(error);
             }
             if (!hasFailed) {
-                throw new Error('No error was thrown')
+                throw new Error("No error was thrown")
             }
         }
         );
@@ -234,5 +234,5 @@ function testTemplate<T1, R>(action: TestActionSupplier1<T1, R>): TestTemplate1<
 function testTemplate<T1, T2, R>(action: TestActionSupplier2<T1, T2, R>): TestTemplate2<T1, T2, R>;
 function testTemplate<T1, T2, T3, R>(action: TestActionSupplier3<T1, T2, T3, R>): TestTemplate3<T1, T2, T3, R>;
 function testTemplate<R>(action: any) {
-    return new TestTemplate2<any, any, R>('function' === typeof action ? action : () => action);
+    return new TestTemplate2<any, any, R>("function" === typeof action ? action : () => action);
 }

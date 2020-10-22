@@ -7,15 +7,15 @@ function createError(...messagesErrorsOrSuppliers: internal.ValueOrSupplier<stri
     let error: Error | undefined;
     for (let index = 0; index < messagesErrorsOrSuppliers.length && !error; index++) {
         const messageErrorOrSupplier = messagesErrorsOrSuppliers[index];
-        const messageOrError = 'function' === typeof messageErrorOrSupplier
+        const messageOrError = "function" === typeof messageErrorOrSupplier
             ? messageErrorOrSupplier()
             : messageErrorOrSupplier;
-        if (null !== messageOrError && undefined !== messageOrError && '' !== messageOrError) {
-            error = messageOrError instanceof Error ? messageOrError : new Error(messageOrError ?? '');
+        if (null !== messageOrError && undefined !== messageOrError && "" !== messageOrError) {
+            error = messageOrError instanceof Error ? messageOrError : new Error(messageOrError ?? "");
         }
     }
 
-    error = error ?? new Error('');
+    error = error ?? new Error("");
     Error.captureStackTrace(error, createError);
     return error;
 }

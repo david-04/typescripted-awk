@@ -1,7 +1,7 @@
-import * as fs from 'fs';
+import * as fs from "fs";
 
 getFilesFromTsconfigJson(`${process.argv[2]}/${process.argv[3]}`)
-    .filter(file => ('test' === process.argv[4]) === !!file.match(/(\/test-tools\/|\/test\/|\.test\.)/))
+    .filter(file => ("test" === process.argv[4]) === !!file.match(/(\/test-tools\/|\/test\/|\.test\.)/))
     .map(file => processSourceFile(process.argv[2], file));
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -10,7 +10,7 @@ getFilesFromTsconfigJson(`${process.argv[2]}/${process.argv[3]}`)
 
 function getFilesFromTsconfigJson(file: string) {
 
-    const json = JSON.parse(fs.readFileSync(file, 'utf8').replace(/\/\/[^\n]*/g, ''));
+    const json = JSON.parse(fs.readFileSync(file, "utf8").replace(/\/\/[^\n]*/g, ""));
     if (Array.isArray(json.files) && json.files.length) {
         return json.files as Array<string>;
     } else {
@@ -24,10 +24,10 @@ function getFilesFromTsconfigJson(file: string) {
 
 function processSourceFile(folder: string, file: string) {
 
-    fs.readFileSync(`${folder}/${file}`, 'utf8')
+    fs.readFileSync(`${folder}/${file}`, "utf8")
         .split(/\r?\n/)
         .map((line, index) => line.replace(/__FILE__/g, file).replace(/__LINE__/g, `${index + 1}`))
-        .map(line => line.match(/reference path.*node-modules.d.ts/) ? '' : line)
-        .map(line => line.replace(/typeof\s+NodeModuleTypes\.[^\s]+/ig, 'any'))
+        .map(line => line.match(/reference path.*node-modules.d.ts/) ? "" : line)
+        .map(line => line.replace(/typeof\s+NodeModuleTypes\.[^\s]+/ig, "any"))
         .forEach(line => console.log(line));
 }

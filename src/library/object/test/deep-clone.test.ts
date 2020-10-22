@@ -1,4 +1,4 @@
-testGroup('__FILE__', () => {
+testGroup("__FILE__", () => {
 
     //------------------------------------------------------------------------------------------------------------------
     // Setup
@@ -16,7 +16,7 @@ testGroup('__FILE__', () => {
     // Objects
     //------------------------------------------------------------------------------------------------------------------
 
-    testCase('Clones objects recursively', () => {
+    testCase("Clones objects recursively", () => {
 
         const input = { a: 1, b: { c: 2, d: 3 } };
         const expectedOutput = JSON.parse(JSON.stringify(input));
@@ -35,7 +35,7 @@ testGroup('__FILE__', () => {
     // Arrays
     //------------------------------------------------------------------------------------------------------------------
 
-    testCase('Clones arrays recursively', () => {
+    testCase("Clones arrays recursively", () => {
 
         const input = [[1, 2], [3, 4]];
         const expectedOutput = JSON.parse(JSON.stringify(input));
@@ -56,7 +56,7 @@ testGroup('__FILE__', () => {
     // Classes
     //------------------------------------------------------------------------------------------------------------------
 
-    testCase('Clones classes recursively', () => {
+    testCase("Clones classes recursively", () => {
 
         const input = new MyClass(new MyNestedClass({ a: 1 }));
         const expectedOutput = new MyClass(new MyNestedClass({ a: 1 }));
@@ -67,10 +67,10 @@ testGroup('__FILE__', () => {
         input.nested = new MyNestedClass({ a: 200 });
 
         nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);
-        nodeModules.assert.ok(actualOutput instanceof MyClass, 'The clone is not an instance of MyClass');
+        nodeModules.assert.ok(actualOutput instanceof MyClass, "The clone is not an instance of MyClass");
         nodeModules.assert.ok(
             actualOutput.nested instanceof MyNestedClass,
-            'The clone does not contain an instance of MyNestedClass'
+            "The clone does not contain an instance of MyNestedClass"
         );
     });
 
@@ -78,7 +78,7 @@ testGroup('__FILE__', () => {
     // Circular nesting
     //------------------------------------------------------------------------------------------------------------------
 
-    testCase('Handles circular nesting', () => {
+    testCase("Handles circular nesting", () => {
 
         const createCircularObject = () => {
             const result: any = { a: 1, b: { c: null } };

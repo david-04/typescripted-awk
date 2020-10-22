@@ -1,4 +1,4 @@
-testGroup('__FILE__', () => {
+testGroup("__FILE__", () => {
 
     //------------------------------------------------------------------------------------------------------------------
     // Test setup
@@ -8,28 +8,28 @@ testGroup('__FILE__', () => {
     class MyClass { }
 
     const testData: Array<[any] | [any, string]> = [
-        [undefined, 'undefined'],
-        [null, 'null'],
+        [undefined, "undefined"],
+        [null, "null"],
         [true],
         [false],
         [-1],
         [0],
         [1.5],
-        [NaN, 'NaN'],
-        [-Infinity, '-Infinity'],
-        [Infinity, 'Infinity'],
-        ['', `''`],
-        [' ', `' '`],
-        ['x', `'x'`],
-        [[], `[]`],
-        [[1, 2], `[1, 2]`],
-        [[undefined], `[undefined]`],
-        [{}, `{}`],
-        [{ a: 1 }, `{ a: 1 }`],
-        [new MyClass(), `new MyClass`],
-        [/[0-9]+/, `/[0-9]+/`],
-        [myFunction, `myFunction`],
-        [() => true, `() => true`],
+        [NaN, "NaN"],
+        [-Infinity, "-Infinity"],
+        [Infinity, "Infinity"],
+        ["", '""'],
+        [" ", '" "'],
+        ["x", '"x"'],
+        [[], "[]"],
+        [[1, 2], "[1, 2]"],
+        [[undefined], "[undefined]"],
+        [{}, "{}"],
+        [{ a: 1 }, "{ a: 1 }"],
+        [new MyClass(), "new MyClass()"],
+        [/[0-9]+/, "/[0-9]+/"],
+        [myFunction, "myFunction"],
+        [() => true, "() => true"],
     ];
 
     function test(
@@ -51,10 +51,10 @@ testGroup('__FILE__', () => {
     // Tests
     //------------------------------------------------------------------------------------------------------------------
 
-    test('isNotNull', isNotNull, value => null !== value && undefined !== value);
-    test('isBoolean', isBoolean, value => true === value || false === value);
-    test('isNumber', isNumber, value => null !== value && undefined !== value && 'number' === typeof value);
-    test('isString', isString, value => null !== value && undefined !== value && 'string' === typeof value);
-    test('isObject', isObject, value => null !== value && undefined !== value && 'object' === typeof value);
-    test('isArray', isArray, value => null !== value && undefined !== value && Array.isArray(value));
+    test("isNotNull", isNotNull, value => null !== value && undefined !== value);
+    test("isBoolean", isBoolean, value => true === value || false === value);
+    test("isNumber", isNumber, value => null !== value && undefined !== value && "number" === typeof value);
+    test("isString", isString, value => null !== value && undefined !== value && "string" === typeof value);
+    test("isObject", isObject, value => null !== value && undefined !== value && "object" === typeof value);
+    test("isArray", isArray, value => null !== value && undefined !== value && Array.isArray(value));
 });
