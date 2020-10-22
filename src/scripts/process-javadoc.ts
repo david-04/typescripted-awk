@@ -190,6 +190,8 @@ function splitCommentIntoDescriptionAndTags(content: string) {
 function processTags(comment: Comment) {
 
     processBriefTag(comment);
+    processReturnTag(comment);
+    processThrowTag(comment);
     const mustExport = processLevelTag(comment);
     validateTags(comment.annotations.map(annotation => annotation.tag));
     return mustExport;
@@ -206,6 +208,35 @@ function processBriefTag(comment: Comment) {
             if ("doc" !== parameters.type) {
                 comment.description = comment.annotations[index].content;
             }
+            comment.annotations.splice(index, 1);
+        }
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+// Remove the @return tag (unless generating documentation).
+//----------------------------------------------------------------------------------------------------------------------
+
+function processReturnTag(comment: Comment) {
+
+    if ("doc" !== parameters.type) {
+        for (let index = 0; index < comment.annotations.length; index++) {
+            if ("@return" === comment.annotations[index].tag) {
+                comment.annotations.splice(index, 1);
+            }
+
+        }
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+// Remove the @throw(s) tag.
+//----------------------------------------------------------------------------------------------------------------------
+
+function processThrowTag(comment: Comment) {
+
+    for (let index = 0; index < comment.annotations.length; index++) {
+        if ("@throw" === comment.annotations[index].tag || "@throws" === comment.annotations[index].tag) {
             comment.annotations.splice(index, 1);
         }
     }
@@ -239,7 +270,7 @@ function processLevelTag(comment: Comment) {
 
 function validateTags(usedTags: Array<string>) {
 
-    const knownTags = ["param", "returns", "trows"];
+    const knownTags = ["param", "return"];
     const unknownTags = usedTags.filter(tag => !knownTags.filter(knownTag => `@${knownTag}` === tag).length).join(", ");
     if (unknownTags.length) {
         throw new Error(`Unsupported tag${1 === unknownTags.length ? "" : "s"}: ${unknownTags}`)

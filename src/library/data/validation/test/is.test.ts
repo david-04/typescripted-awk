@@ -1,35 +1,37 @@
-testGroup("__FILE__", () => {
+testGroupForFile("__FILE__", () => {
 
     //------------------------------------------------------------------------------------------------------------------
     // Test setup
     //------------------------------------------------------------------------------------------------------------------
 
+    // @ts-ignore
     function myFunction() { }
+    // @ts-ignore
     class MyClass { }
 
-    const testData: Array<[any] | [any, string]> = [
-        [undefined, "undefined"],
-        [null, "null"],
-        [true],
-        [false],
-        [-1],
-        [0],
-        [1.5],
-        [NaN, "NaN"],
-        [-Infinity, "-Infinity"],
-        [Infinity, "Infinity"],
-        ["", '""'],
-        [" ", '" "'],
-        ["x", '"x"'],
-        [[], "[]"],
-        [[1, 2], "[1, 2]"],
-        [[undefined], "[undefined]"],
-        [{}, "{}"],
-        [{ a: 1 }, "{ a: 1 }"],
-        [new MyClass(), "new MyClass()"],
-        [/[0-9]+/, "/[0-9]+/"],
-        [myFunction, "myFunction"],
-        [() => true, "() => true"],
+    const testData = [
+        "undefined     ",
+        "null          ",
+        "true          ",
+        "false         ",
+        "-1            ",
+        "0             ",
+        "1.5           ",
+        "NaN           ",
+        "-Infinity     ",
+        "Infinity      ",
+        "''            ",
+        "' '           ",
+        "'x'           ",
+        "[]            ",
+        "[1, 2]        ",
+        "[undefined]   ",
+        "{}            ",
+        "{ a: 1 }      ",
+        "new MyClass() ",
+        "/[0-9]+/      ",
+        "myFunction    ",
+        "() => true    ",
     ];
 
     function test(
@@ -37,11 +39,10 @@ testGroup("__FILE__", () => {
         testRunner: internal.Predicate1<any>,
         expectedResultSupplier: internal.Predicate1<any>
     ) {
-        for (const array of testData) {
-            const value = array[0];
-            const valueString = array[1] ?? JSON.stringify(value[0]);
+        for (const valueAsString of testData.map(value => value.trim())) {
+            const value = eval(valueAsString);
             const expectedResult = expectedResultSupplier(value);
-            testCase(`${functionName}(${valueString}) returns ${expectedResult}`, () => {
+            testCase(`${functionName}(${valueAsString}) returns ${expectedResult}`, () => {
                 nodeModules.assert.strictEqual(testRunner(value), expectedResult);
             });
         }

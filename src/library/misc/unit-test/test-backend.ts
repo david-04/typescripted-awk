@@ -2,23 +2,23 @@
 // An abstraction layer representing a test backend like Jest or Jasmine.
 //----------------------------------------------------------------------------------------------------------------------
 
-abstract class TestBackend {
+interface TestBackend {
 
-    public abstract testGroup(description: string, action: internal.Action): void;
-    public abstract testCase(description: string, action: internal.Action): void;
+    testGroup(description: string, action: internal.Action): void;
+    testCase(description: string, action: internal.Action): void;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 // A facade for Jest.
 //----------------------------------------------------------------------------------------------------------------------
 
-class Jest extends TestBackend {
+class Jest implements TestBackend {
 
     private readonly describe = (global as any)["describe"];
     private readonly test = (global as any)["test"];
 
     public get isInUse() {
-        return 0 < process.argv.filter(argument => argument.match(/jest/i)).length;
+        return 0 < process.argv.filter(argument => argument.match(/jest/i)).length && this.describe && this.test;
     }
 
     public testGroup(description: string, action: internal.Action): void {
@@ -35,13 +35,13 @@ class Jest extends TestBackend {
 // A facade for Jasmine.
 //----------------------------------------------------------------------------------------------------------------------
 
-class Jasmine extends TestBackend {
+class Jasmine implements TestBackend {
 
     private readonly describe = (global as any)["describe"];
     private readonly it = (global as any)["it"];
 
     public get isInUse() {
-        return 0 < process.argv.filter(argument => argument.match(/jasmine/i)).length;
+        return 0 < process.argv.filter(argument => argument.match(/jasmine/i)).length && this.describe && this.it;
     }
 
     public testGroup(description: string, action: internal.Action) {
@@ -57,4 +57,17 @@ class Jasmine extends TestBackend {
 // Set up the correct facade for the currently used test backend.
 //----------------------------------------------------------------------------------------------------------------------
 
-const testBackend = [new Jasmine(), new Jest()].filter(backend => backend.isInUse)[0] as TestBackend;
+const testBackends = [new Jasmine(), new Jest()].filter(backend => backend.isInUse);
+
+//----------------------------------------------------------------------------------------------------------------------
+// Get the current test backend instance and throw an error when not running in a supported test backend.
+//----------------------------------------------------------------------------------------------------------------------
+
+function getTestBackend() {
+
+    if (!testBackends.length) {
+        throw new Error("testGroup() and testCase() can only be called when running inside Jasmine or Jest");
+    } else {
+        return testBackends[0];
+    }
+}
