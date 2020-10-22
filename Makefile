@@ -104,7 +104,7 @@ build/library/tsawk.ts : $(LIBRARY_SOURCES) build/scripts/cat-typescript-sources
 	node build/scripts/cat-typescript-sources.js src/library tsconfig.json source > $@.tmp
 	mv -f $@.tmp $@
 
-build/library/tsawk-level-%.js build/library/tsawk-level-%.d.ts : build/library/tsawk.ts build/scripts/process-javadoc.js
+build/library/tsawk-level-%.js build/library/tsawk-level-%.d.ts : build/library/tsawk.ts build/scripts/process-javadoc.js typecheck
 	echo build/library/tsawk-level-$*.js
 	rm -f build/library/level-$**
 	cp build/library/tsawk.ts build/library/tsawk-level-$*.ts

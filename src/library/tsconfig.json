@@ -95,16 +95,32 @@
     //------------------------------------------------------------------------------------------------------------------
 
     "internal/node-modules.ts",
-    "data/generic-function-types.ts",
     "internal/test-tools/source-map-support.ts",
+    "data/generic-function-types.ts",
 
     //------------------------------------------------------------------------------------------------------------------
-    // Test framework
+    // Test backend
     //------------------------------------------------------------------------------------------------------------------
 
     "internal/test-tools/test-backend.ts",
     "internal/test-tools/test-group.ts",
     "internal/test-tools/test-case.ts",
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Low level functions required for the data-driven test framework
+    //------------------------------------------------------------------------------------------------------------------
+
+    "data/validation/is.ts",
+    "data/validation/test/is.test.ts",
+
+    "object/deep-clone.ts",
+    "object/test/deep-clone.test.ts",
+    "object/deep-overlay.ts",
+    "object/test/deep-overlay.test.ts",
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Data-driven test framework
+    //------------------------------------------------------------------------------------------------------------------
 
     "internal/test-tools/expect.ts",
 
