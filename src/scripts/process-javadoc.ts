@@ -115,7 +115,7 @@ function removeCommentsWithoutCode(sections: Array<CodeSection>) {
     for (let index = 0; index < sections.length; index++) {
         if (sections[index].isComment) {
             if (index + 1 === sections.length || sections[index + 1].isComment || !sections[index + 1].content.trim()) {
-                sections.splice(index, 1);
+                sections.splice(index--, 1);
             }
         }
     }
@@ -192,6 +192,7 @@ function processTags(comment: Comment) {
     processBriefTag(comment);
     processReturnTag(comment);
     processThrowTag(comment);
+    processTypeTag(comment);
     const mustExport = processLevelTag(comment);
     validateTags(comment.annotations.map(annotation => annotation.tag));
     return mustExport;
@@ -208,7 +209,7 @@ function processBriefTag(comment: Comment) {
             if ("doc" !== parameters.type) {
                 comment.description = comment.annotations[index].content;
             }
-            comment.annotations.splice(index, 1);
+            comment.annotations.splice(index--, 1);
         }
     }
 }
@@ -222,9 +223,8 @@ function processReturnTag(comment: Comment) {
     if ("doc" !== parameters.type) {
         for (let index = 0; index < comment.annotations.length; index++) {
             if ("@return" === comment.annotations[index].tag) {
-                comment.annotations.splice(index, 1);
+                comment.annotations.splice(index--, 1);
             }
-
         }
     }
 }
@@ -237,7 +237,24 @@ function processThrowTag(comment: Comment) {
 
     for (let index = 0; index < comment.annotations.length; index++) {
         if ("@throw" === comment.annotations[index].tag || "@throws" === comment.annotations[index].tag) {
-            comment.annotations.splice(index, 1);
+            comment.annotations.splice(index--, 1);
+        }
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+// Replace @type with @typeParam for the documentation and remove it otherwise.
+//----------------------------------------------------------------------------------------------------------------------
+
+function processTypeTag(comment: Comment) {
+
+    for (let index = 0; index < comment.annotations.length; index++) {
+        if ("@type" === comment.annotations[index].tag) {
+            if ("doc" === parameters.type) {
+                comment.annotations[index].tag = "@typeParam";
+            } else {
+                comment.annotations.splice(index--, 1);
+            }
         }
     }
 }
@@ -257,7 +274,7 @@ function processLevelTag(comment: Comment) {
                 throw new Error(`Unknown value for @level ${level}`);
             }
             mustExport ||= "test" !== parameters.type && parseInt(level) <= parameters.level;
-            comment.annotations.splice(index, 1);
+            comment.annotations.splice(index--, 1);
         }
     }
 
@@ -270,7 +287,7 @@ function processLevelTag(comment: Comment) {
 
 function validateTags(usedTags: Array<string>) {
 
-    const knownTags = ["param", "return"];
+    const knownTags = ["param", "return", "typeParam"];
     const unknownTags = usedTags.filter(tag => !knownTags.filter(knownTag => `@${knownTag}` === tag).length).join(", ");
     if (unknownTags.length) {
         throw new Error(`Unsupported tag${1 === unknownTags.length ? "" : "s"}: ${unknownTags}`)

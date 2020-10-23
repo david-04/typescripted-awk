@@ -1,8 +1,12 @@
 //----------------------------------------------------------------------------------------------------------------------
-// Create a deep clone of an object.
-// @param value The object to clone.
-// @return Returns a deep copy of the object.
-// @level 3
+// Create a deep clone of the given value. Only objects (like arrays, instances of classes, and anonymous object
+// literals) are cloned. For all other values (like numbers and functions), shallow copying is used. Cyclic dependencies
+// (recursive nesting of an object inside itself) are supported and preserved.
+//
+// @brief   Create a deep copy of the given object.
+// @param   value The object to clone.
+// @return  Returns a deep copy of the object.
+// @level   3
 //----------------------------------------------------------------------------------------------------------------------
 
 function deepClone<T>(value: T): T {

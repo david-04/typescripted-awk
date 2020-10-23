@@ -115,10 +115,10 @@
     "data/validation/is.ts",
     "data/validation/test/is.test.ts",
 
-    "object/deep-clone.ts",
-    "object/test/deep-clone.test.ts",
-    "object/deep-overlay.ts",
-    "object/test/deep-overlay.test.ts",
+    "data/object/deep-clone.ts",
+    "data/object/test/deep-clone.test.ts",
+    "data/object/deep-overlay.ts",
+    "data/object/test/deep-overlay.test.ts",
 
     //------------------------------------------------------------------------------------------------------------------
     // Data-driven test framework
