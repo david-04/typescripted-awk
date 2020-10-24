@@ -54,6 +54,9 @@ footer {
 .tsd-navigation li.tsd-kind-class:first-child:before, .tsd-navigation li:not(.tsd-kind-class) + li.tsd-kind-class:before {
     content : "Classes";
 }
+.tsd-navigation li.tsd-kind-enum:first-child:before, .tsd-navigation li:not(.tsd-kind-enum) + li.tsd-kind-enum:before {
+    content : "Enums";
+}
 .tsd-navigation li.tsd-kind-function:first-child:before, .tsd-navigation li:not(.tsd-kind-function) + li.tsd-kind-function:before {
     content : "Functions";
 }
@@ -67,6 +70,7 @@ footer {
     content : "Variables";
 }
 .tsd-navigation li.tsd-kind-class:first-child:before, .tsd-navigation li:not(.tsd-kind-class) + li.tsd-kind-class:before,
+.tsd-navigation li.tsd-kind-enum:first-child:before, .tsd-navigation li:not(.tsd-kind-enum) + li.tsd-kind-enum:before,
 .tsd-navigation li.tsd-kind-function:first-child:before, li:not(.tsd-kind-function) + li.tsd-kind-function:before,
 .tsd-navigation li.tsd-kind-interface:first-child:before, .tsd-navigation li:not(.tsd-kind-interface) + li.tsd-kind-interface:before,
 .tsd-navigation li.tsd-kind-type-alias:first-child:before, .tsd-navigation li:not(.tsd-kind-type-alias) + li.tsd-kind-type-alias:before,
@@ -81,6 +85,7 @@ footer {
     border-bottom: 1px solid #666666;
 }
 .tsd-navigation li:not(:first-child).tsd-kind-class:before,
+.tsd-navigation li:not(:first-child).tsd-kind-enum::before,
 .tsd-navigation li:not(:first-child).tsd-kind-function::before,
 .tsd-navigation li:not(:first-child).tsd-kind-interface::before,
 .tsd-navigation li:not(:first-child).tsd-kind-type-alias:before,

@@ -1,9 +1,9 @@
 //----------------------------------------------------------------------------------------------------------------------
-// Create a deep copy of an object and overlay (merge) it with another one. The resulting object contains all properties
+// Create a deep copy of an object and merge (overlay) it with another one. The resulting object contains all properties
 // of the overlaid object as well as any that only exist in the base object.
 //
 // ```ts
-// deepOverlay(
+// deepMerge(
 //     {
 //         name: 'John Smith',
 //         contact: {
@@ -31,7 +31,7 @@
 // }
 // ```
 //
-// @brief   Deep-clone an object and overlay (merge) it with another one.
+// @brief   Deep-clone an object and merge it with another one.
 // @param   base The base object to be cloned and overlaid.
 // @param   overlay The overlay object to override properties of the base object.
 // @return  Returns a deep clone of the base object overlaid with the overlay object.
@@ -40,15 +40,15 @@
 // @level   3
 //----------------------------------------------------------------------------------------------------------------------
 
-function deepOverlay<B, O>(base: B, overlay: O): B & O {
-    return recursiveOverlay(deepClone(base), deepClone(overlay));
+function deepMerge<B, O>(base: B, overlay: O): B & O {
+    return recursiveMerge(deepClone(base), overlay);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Recursively overlay the base object with the overlay object.
+// Recursively merge the overlay object into the base object.
 //----------------------------------------------------------------------------------------------------------------------
 
-function recursiveOverlay(base: any, overlay: any) {
+function recursiveMerge(base: any, overlay: any) {
 
     if (isObject(base)
         && isObject(overlay)
@@ -56,10 +56,10 @@ function recursiveOverlay(base: any, overlay: any) {
         && Object.getPrototypeOf(base) === Object.getPrototypeOf(overlay)
     ) {
         for (const key in overlay) {
-            base[key] = recursiveOverlay(base[key], overlay[key]);
+            base[key] = recursiveMerge(base[key], overlay[key]);
         }
         return base;
     }
 
-    return overlay;
+    return deepClone(overlay);
 }

@@ -10,7 +10,7 @@ testGroupForFile("__FILE__", () => {
         const overlay = { b: { d: 4 } };
         const expectedOutput = { a: true, b: { c: "x", d: 4 } };
 
-        const actualOutput = deepOverlay(base, overlay);
+        const actualOutput = deepMerge(base, overlay);
 
         nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);
     });
@@ -25,7 +25,7 @@ testGroupForFile("__FILE__", () => {
         const overlay = { a: undefined };
         const expectedOutput = { a: undefined };
 
-        const actualOutput = deepOverlay(base, overlay);
+        const actualOutput = deepMerge(base, overlay);
 
         nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);
     });
@@ -40,7 +40,7 @@ testGroupForFile("__FILE__", () => {
         const overlay = { a: [10, 11] };
         const expectedOutput = { a: [10, 11] };
 
-        const actualOutput = deepOverlay(base, overlay);
+        const actualOutput = deepMerge(base, overlay);
 
         nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);
     });
@@ -59,7 +59,7 @@ testGroupForFile("__FILE__", () => {
         const overlay = new MyClass(3);
         const expectedOutput = new MyClass(3);
 
-        const actualOutput = deepOverlay(base, overlay);
+        const actualOutput = deepMerge(base, overlay);
 
         nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);
         nodeModules.assert.ok(actualOutput instanceof MyClass, "The merged result is not an instance of MyClass");
@@ -86,7 +86,7 @@ testGroupForFile("__FILE__", () => {
         const overlay = new MySubClass();
         const expectedOutput = new MySubClass();
 
-        const actualOutput = deepOverlay(base, overlay);
+        const actualOutput = deepMerge(base, overlay);
 
         nodeModules.assert.ok(actualOutput instanceof MySubClass, "The merged result is not an instance of MySubClass");
         nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);

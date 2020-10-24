@@ -66,7 +66,7 @@ build/unit-test/unit-test.ts : build/library/tsawk.ts $(UNIT_TEST_SOURCES) build
 
 typedoc : $(foreach level, $(LEVELS), build/typedoc/level-$(level)/index.html);
 
-build/typedoc/level-%/index.html : build/library/tsawk.ts build/scripts/process-javadoc.js
+build/typedoc/level-%/index.html : build/library/tsawk.ts build/scripts/process-javadoc.js src/resources/typedoc.css
 	echo build/typedoc/level-$*.ts
 	rm -rf build/typedoc/level-$**
 	mkdir -p build/typedoc/level-$*

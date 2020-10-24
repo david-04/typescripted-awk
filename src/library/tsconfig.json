@@ -117,8 +117,8 @@
 
     "data/object/deep-clone.ts",
     "data/object/test/deep-clone.test.ts",
-    "data/object/deep-overlay.ts",
-    "data/object/test/deep-overlay.test.ts",
+    "data/object/deep-merge.ts",
+    "data/object/test/deep-merge.test.ts",
 
     //------------------------------------------------------------------------------------------------------------------
     // Data-driven test framework
