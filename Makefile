@@ -20,7 +20,7 @@ help :
 VERSION=0.0.0
 LEVELS=3
 
-ECMASCRIPT_VERSION=es5
+ECMASCRIPT_VERSION=ES2019
 TSC=tsc -t $(ECMASCRIPT_VERSION) \
 		--strict \
 		--noImplicitAny \
@@ -29,7 +29,14 @@ TSC=tsc -t $(ECMASCRIPT_VERSION) \
 		--strictBindCallApply \
 		--strictPropertyInitialization  \
 		--noImplicitThis \
-		--alwaysStrict
+		--alwaysStrict \
+		--moduleResolution node
+
+TSC_STRICT=$(TSC) \
+		--noUnusedLocals \
+		--noUnusedParameters \
+		--noImplicitReturns \
+		--noFallthroughCasesInSwitch
 
 JEST=jest --silent --coverage --coverageDirectory=build/test/coverage/unit
 JASMINE=jasmine
@@ -49,7 +56,7 @@ test : build/unit-test/unit-test.js
 
 build/unit-test/unit-test.js : build/unit-test/unit-test.ts
 	echo $@
-	$(TSC) --sourceMap --outDir build/unit-test/output build/unit-test/unit-test.ts
+	$(TSC_STRICT) --sourceMap --outDir build/unit-test/output build/unit-test/unit-test.ts
 	mv -f build/unit-test/output/unit-test.js build/unit-test/
 	rm -rf build/unit-test/output
 
