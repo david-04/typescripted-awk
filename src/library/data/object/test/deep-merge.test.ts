@@ -91,4 +91,40 @@ testGroupForFile("__FILE__", () => {
         nodeModules.assert.ok(actualOutput instanceof MySubClass, "The merged result is not an instance of MySubClass");
         nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);
     });
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Regular expressions
+    //------------------------------------------------------------------------------------------------------------------
+
+    testCase("Does not merge regular expressions", () => {
+
+        const base = { a: /abc/ };
+        const overlay = { a: /xyz/i };
+        const expectedOutput = { a: /xyz/i };
+
+        const actualOutput = deepMerge(base, overlay);
+
+        nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);
+    });
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Circular references
+    //------------------------------------------------------------------------------------------------------------------
+
+    testCase("Handles circular references", () => {
+
+        const base = { a: { b: new Array<any>() } };
+        base.a.b.push(base);
+
+        const overlay = { x: { y: new Array<any>() } };
+        overlay.x.y.push(overlay);
+
+        const expectedOutput = { a: { b: new Array<any>() }, x: { y: new Array<any>() } };
+        expectedOutput.a.b.push(expectedOutput);
+        expectedOutput.x.y.push({ x: expectedOutput.x });
+
+        const actualOutput = deepMerge(base, overlay);
+
+        nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);
+    });
 });

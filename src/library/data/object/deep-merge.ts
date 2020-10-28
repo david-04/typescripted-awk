@@ -41,22 +41,27 @@
 //----------------------------------------------------------------------------------------------------------------------
 
 function deepMerge<B, O>(base: B, overlay: O): B & O {
-    return recursiveMerge(deepClone(base), overlay);
+    return recursiveMerge(deepClone(base), overlay, []);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 // Recursively merge the overlay object into the base object.
 //----------------------------------------------------------------------------------------------------------------------
 
-function recursiveMerge(base: any, overlay: any) {
+function recursiveMerge(base: any, overlay: any, stack: Array<{ base: any, overlay: any }>) {
 
     if (isObject(base)
         && isObject(overlay)
         && !isArray(base)
+        && !(base instanceof RegExp)
         && Object.getPrototypeOf(base) === Object.getPrototypeOf(overlay)
     ) {
-        for (const key in overlay) {
-            base[key] = recursiveMerge(base[key], overlay[key]);
+        if (!stack.filter(item => item.base === base && item.overlay === overlay).length) {
+            for (const key in overlay) {
+                stack.push({ base, overlay });
+                base[key] = recursiveMerge(base[key], overlay[key], stack);
+                stack.pop();
+            }
         }
         return base;
     }
