@@ -16,6 +16,12 @@ function filenameToTestGroups(filename: string) {
 // Create nested test groups based on the filename and path.
 //----------------------------------------------------------------------------------------------------------------------
 
-function testGroupForFile(filename: string, action: internal.Action) {
-    testGroup(filenameToTestGroups(filename), action);
+function testGroupForFile(filename: string, action: internal.Action): void;
+function testGroupForFile(filename: string, group: string, action: internal.Action): void;
+function testGroupForFile(filename: string, group1: string, group2: string, action: internal.Action): void;
+function testGroupForFile(filename: string, ...moreGroupsAndAction: Array<string | internal.Action>) {
+
+    const groups = filenameToTestGroups(filename)
+    moreGroupsAndAction.slice(0, moreGroupsAndAction.length - 1).forEach(group => groups.push(group as string));
+    testGroup(groups, moreGroupsAndAction[moreGroupsAndAction.length - 1] as internal.Action);
 }

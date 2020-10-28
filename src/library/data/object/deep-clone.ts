@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Create a deep clone of the given value. Only objects (like arrays, instances of classes, and anonymous object
-// literals) are cloned. For all other values (like numbers and functions), shallow copying is used. Cyclic dependencies
+// literals) are cloned. For all other values (like numbers and functions), shallow copying is used. Circular references
 // (recursive nesting of an object inside itself) are supported and preserved.
 //
 // @brief   Create a deep copy of the given object.
@@ -21,7 +21,7 @@ function recursiveClone(value: any, stack: Array<{ value: any, clone: any }>) {
 
     let clone: any = value;
 
-    if (isObject(value)) {
+    if (isObject(value) && !(value instanceof RegExp)) {
         const parent = stack.filter(item => item.value === value)[0];
         if (parent) {
             return parent.clone;

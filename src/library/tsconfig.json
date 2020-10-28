@@ -120,6 +120,19 @@
     "data/object/deep-merge.ts",
     "data/object/test/deep-merge.test.ts",
 
+    "misc/stringification/stringified-value.ts",
+    "misc/stringification/test/stringified-value.test.ts",
+    "misc/stringification/stringifier-context.ts",
+    "misc/stringification/test/stringifier-context.test.ts",
+    "misc/stringification/stringifier-engine.ts",
+    "misc/stringification/test/stringifier-engine.test.ts",
+    "misc/stringification/stringifier-builder.ts",
+    "misc/stringification/test/stringifier-builder.test.ts",
+    "misc/stringification/stringifier.ts",
+    "misc/stringification/test/stringifier.test.ts",
+    "misc/stringification/default-stringifier.ts",
+    "misc/stringification/test/default-stringifier.test.ts",
+
     //------------------------------------------------------------------------------------------------------------------
     // Data-driven test framework
     //------------------------------------------------------------------------------------------------------------------
