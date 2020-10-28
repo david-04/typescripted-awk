@@ -54,10 +54,54 @@ class Jasmine implements TestBackend {
 }
 
 //----------------------------------------------------------------------------------------------------------------------
+// Built-in test backend.
+//----------------------------------------------------------------------------------------------------------------------
+
+class BuiltInTestBackend implements TestBackend {
+
+    private readonly groupStack = new Array<string>();
+    private passed = 0;
+    private failed = 0;
+
+    constructor() {
+        process.on('beforeExit', () => {
+            if (0 < this.failed) {
+                console.log(`${this.passed} passed, ${this.failed} failed`);
+            } else if (0 < this.passed) {
+                console.log(`${this.failed ? "" : "\n"}${this.passed} passed`);
+            }
+        });
+    }
+
+    public get isInUse() {
+        return true;
+    }
+
+    public testGroup(description: string, action: internal.Action) {
+        this.groupStack.push(description);
+        action();
+        this.groupStack.pop();
+    }
+
+    public testCase(description: string, action: internal.Action) {
+        try {
+            action();
+            this.passed++;
+        } catch (exception) {
+            this.groupStack.push(description);
+            description = this.groupStack.filter(description => description).join(" => ")
+            this.groupStack.pop();
+            console.log(`${this.failed ? "" : "\n"}FAILED: ${description}\n\n${exception}\n`);
+            this.failed++;
+        }
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------------------
 // Set up the correct facade for the currently used test backend.
 //----------------------------------------------------------------------------------------------------------------------
 
-const testBackends = [new Jasmine(), new Jest()].filter(backend => backend.isInUse);
+const testBackends = [new Jasmine(), new Jest(), new BuiltInTestBackend()].filter(backend => backend.isInUse);
 
 //----------------------------------------------------------------------------------------------------------------------
 // Get the current test backend instance and throw an error when not running in a supported test backend.

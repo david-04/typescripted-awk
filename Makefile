@@ -38,9 +38,10 @@ TSC_STRICT=$(TSC) \
 		--noImplicitReturns \
 		--noFallthroughCasesInSwitch
 
-JEST=jest --silent --coverage --coverageDirectory=build/test/coverage/unit
+BUILT_IN_TEST_FRAMEWORK=node
 JASMINE=jasmine
-RUN_TEST=$(JASMINE)
+JEST=jest --silent --coverage --coverageDirectory=build/test/coverage/unit
+RUN_TEST=$(BUILT_IN_TEST_FRAMEWORK)
 
 LIBRARY_FOLDERS=$(foreach segment, . * */* */*/* */*/*/* */*/*/*/*, src/library/$(segment))
 UNIT_TEST_SOURCES=$(wildcard $(foreach folder, $(LIBRARY_FOLDERS), $(folder)/*.test.ts $(folder)/test-tools/*.ts))

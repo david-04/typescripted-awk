@@ -37,11 +37,11 @@ function testCase(name: internal.ValueOrArray<string>, action: internal.Action) 
 
     if (Array.isArray(name)) {
         if (name.length <= 1) {
-            getTestBackend().testCase(name[0] ?? '', () => { action(); });
+            getTestBackend().testCase(name[0]?.trim() ?? '', () => { action(); });
         } else {
             testGroup(name.slice(0, name.length - 1), () => testCase(name[name.length - 1], action));
         }
     } else {
-        getTestBackend().testCase(name ?? '', () => { action(); });
+        getTestBackend().testCase(name?.trim() ?? '', () => { action(); });
     }
 }
