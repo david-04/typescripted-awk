@@ -16,14 +16,14 @@ testGroupForFile("__FILE__", "stringifyWithOptions()", () => {
         let stringifyWasCalled = false;
         function stringify(actualInput: any) {
             stringifyWasCalled = true;
-            nodeModules.assert.deepStrictEqual(actualInput, expectedInput);
+            assert.deepStrictEqual(actualInput, expectedInput);
             return expectedOutput;
         }
 
         const actualOutput = stringifier.stringifyWithOptions(expectedInput, {});
 
-        nodeModules.assert.ok(stringifyWasCalled, "The stringify handler was not called");
-        nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);
+        assert.ok(stringifyWasCalled, "The stringify handler was not called");
+        assert.deepStrictEqual(actualOutput, expectedOutput);
     });
 
     //------------------------------------------------------------------------------------------------------------------
@@ -37,15 +37,15 @@ testGroupForFile("__FILE__", "stringifyWithOptions()", () => {
         let stringifyWasCalled = false;
         function stringify(_actualInput: any, context: StringifierContext<any>) {
             stringifyWasCalled = true;
-            nodeModules.assert.deepStrictEqual(context.options, expectedOptions);
-            nodeModules.assert.deepStrictEqual(context.currentStringifier, stringifier);
-            nodeModules.assert.deepStrictEqual(context.currentHandlerIndex, 0);
+            assert.deepStrictEqual(context.options, expectedOptions);
+            assert.deepStrictEqual(context.currentStringifier, stringifier);
+            assert.deepStrictEqual(context.currentHandlerIndex, 0);
             return "";
         }
 
         stringifier.stringifyWithOptions("", {});
 
-        nodeModules.assert.ok(stringifyWasCalled, "The stringify handler was not called");
+        assert.ok(stringifyWasCalled, "The stringify handler was not called");
     });
 
     //------------------------------------------------------------------------------------------------------------------
@@ -61,14 +61,14 @@ testGroupForFile("__FILE__", "stringifyWithOptions()", () => {
         let stringifyWasCalled = false;
         function stringify(_actualInput: any, context: StringifierContext<any>) {
             stringifyWasCalled = true;
-            nodeModules.assert.deepStrictEqual(context.options, mergedOptions);
+            assert.deepStrictEqual(context.options, mergedOptions);
             return "";
         }
 
         stringifier.stringifyWithOptions("", deepClone(overrideOptions));
 
-        nodeModules.assert.ok(stringifyWasCalled, "The stringify handler was not called");
-        nodeModules.assert.deepStrictEqual(stringifier.defaultOptions, defaultOptions);
+        assert.ok(stringifyWasCalled, "The stringify handler was not called");
+        assert.deepStrictEqual(stringifier.defaultOptions, defaultOptions);
     });
 
     //------------------------------------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ testGroupForFile("__FILE__", "stringifyWithOptions()", () => {
 
         const actualOutput = stringifier.stringifyWithOptions(new StringifiedValue(expectedOutput), {});
 
-        nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);
+        assert.deepStrictEqual(actualOutput, expectedOutput);
     });
 
 
@@ -104,7 +104,7 @@ testGroupForFile("__FILE__", "stringifyWithOptions()", () => {
 
         const actualOutput = stringifier.stringifyWithOptions(input, {});
 
-        nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);
+        assert.deepStrictEqual(actualOutput, expectedOutput);
     });
 
     //------------------------------------------------------------------------------------------------------------------
@@ -123,7 +123,7 @@ testGroupForFile("__FILE__", "stringifyWithOptions()", () => {
 
         const actualOutput = stringifier.stringifyWithOptions("", {});
 
-        nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);
+        assert.deepStrictEqual(actualOutput, expectedOutput);
     });
 
     //------------------------------------------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ testGroupForFile("__FILE__", "stringifyWithOptions()", () => {
 
         const actualOutput = stringifier.stringifyWithOptions(input, {});
 
-        nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);
+        assert.deepStrictEqual(actualOutput, expectedOutput);
     });
 
     //------------------------------------------------------------------------------------------------------------------
@@ -159,7 +159,7 @@ testGroupForFile("__FILE__", "stringifyWithOptions()", () => {
 
         const actualOutput = stringifier.stringifyWithOptions(input, {});
 
-        nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);
+        assert.deepStrictEqual(actualOutput, expectedOutput);
     });
 
     //------------------------------------------------------------------------------------------------------------------
@@ -210,10 +210,10 @@ testGroupForFile("__FILE__", "stringifyWithContext()", () => {
         const context = new StringifierContext<any>({}, stringifier);
 
         let actualOutput = stringifier.stringifyWithContext("", context);
-        nodeModules.assert.deepStrictEqual(actualOutput, firstHandlerOutput);
+        assert.deepStrictEqual(actualOutput, firstHandlerOutput);
 
         context.currentHandlerIndex = 1;
         actualOutput = stringifier.stringifyWithContext("", context);
-        nodeModules.assert.deepStrictEqual(actualOutput, secondHandlerOutput);
+        assert.deepStrictEqual(actualOutput, secondHandlerOutput);
     });
 });

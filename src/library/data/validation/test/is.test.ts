@@ -44,7 +44,7 @@ testGroupForFile("__FILE__", () => {
             const value = eval(valueAsString);
             const expectedResult = expectedResultSupplier(value);
             testCase(`${functionName}(${valueAsString}) returns ${expectedResult}`, () => {
-                nodeModules.assert.strictEqual(testRunner(value), expectedResult);
+                assert.strictEqual(testRunner(value), expectedResult);
             });
         }
     }

@@ -16,7 +16,7 @@ testGroupForFile("__FILE__", () => {
     ) {
         let optionalSecondParameter = options ? `, ${JSON.stringify(options)}` : "";
         testCase(`stringify(${displayValueAs}${optionalSecondParameter}) returns ${expectedResult}`, () => {
-            nodeModules.assert.strictEqual(stringify(value, options), expectedResult)
+            assert.strictEqual(stringify(value, options), expectedResult)
         });
     }
 
@@ -27,7 +27,7 @@ testGroupForFile("__FILE__", () => {
         expectedResult: string
     ) {
         testCase(description, () => {
-            nodeModules.assert.strictEqual(stringify(value, options).replace(/\r/g, ""), removeIndent(expectedResult));
+            assert.strictEqual(stringify(value, options).replace(/\r/g, ""), removeIndent(expectedResult));
         });
     }
 
@@ -118,14 +118,11 @@ testGroupForFile("__FILE__", () => {
         if (false === breakLines) {
             const multiline = functionAsString.replace(/\\n/, "\\n");
             testCase(`stringify(${functionAsString}, ${JSON.stringify(options)}) returns ${multiline}`, () => {
-                nodeModules.assert.strictEqual(
-                    stringify(Function(), options),
-                    functionAsString.replace(/\\n +/g, ' ')
-                );
+                assert.strictEqual(stringify(Function(), options), functionAsString.replace(/\\n +/g, ' '));
             });
         } else {
             testCase(`stringify(${functionAsString}, ${JSON.stringify(options)}) returns ${functionAsString}`, () => {
-                nodeModules.assert.strictEqual(
+                assert.strictEqual(
                     stringify(getFunction(), options).replace(/\r/g, "").replace(/\n +/g, '\n'),
                     functionAsString.replace(/\\n/g, "\n")
                 );

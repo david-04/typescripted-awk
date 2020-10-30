@@ -13,7 +13,7 @@ testGroupForFile("__FILE__", () => {
     ]
         .forEach(data => {
             testCase(`filenameToTestGroup(${JSON.stringify(data[0])}) returns ${JSON.stringify(data[1])}`, () => {
-                nodeModules.assert.deepStrictEqual(filenameToTestGroups(data[0] as any), data[1]);
+                assert.deepStrictEqual(filenameToTestGroups(data[0] as any), data[1]);
             })
         });
 });

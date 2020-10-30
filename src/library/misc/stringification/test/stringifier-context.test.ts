@@ -79,15 +79,15 @@ testGroupForFile("__FILE__", () => {
         const targetStringifier = targetStringifierSelector(initialState);
 
         targetStringifier.onStringifyWithContext((currentValue, currentContext) => {
-            nodeModules.assert.strictEqual(currentValue, value);
-            nodeModules.assert.deepStrictEqual(getState(currentContext), getExpectedCallbackState(initialState));
+            assert.strictEqual(currentValue, value);
+            assert.deepStrictEqual(getState(currentContext), getExpectedCallbackState(initialState));
             return expectedStringifiedValue;
         });
 
         const actualStringifiedValue = stringificationAction(context, value);
 
-        nodeModules.assert.strictEqual(actualStringifiedValue, expectedStringifiedValue);
-        nodeModules.assert.deepStrictEqual(getState(context), initialState);
+        assert.strictEqual(actualStringifiedValue, expectedStringifiedValue);
+        assert.deepStrictEqual(getState(context), initialState);
         targetStringifier.assertWasInvoked();
 
     }

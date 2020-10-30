@@ -11,7 +11,7 @@ testGroupForFile("__FILE__", "createStringifier()", () => {
 
         const stringify = createStringifier(stringifierEngine);
 
-        nodeModules.assert.strictEqual(stringify(1), expectedResult);
+        assert.strictEqual(stringify(1), expectedResult);
     });
 
     //------------------------------------------------------------------------------------------------------------------
@@ -33,8 +33,8 @@ testGroupForFile("__FILE__", "createStringifier()", () => {
             builder.stringifyIf(extendedHandler.appliesTo, extendedHandler.stringify)
         );
 
-        nodeModules.assert.strictEqual(stringifyExtended(123), expectedNumberResult);
-        nodeModules.assert.strictEqual(stringifyExtended("a"), expectedStringResult);
+        assert.strictEqual(stringifyExtended(123), expectedNumberResult);
+        assert.strictEqual(stringifyExtended("a"), expectedStringResult);
     });
 
     //------------------------------------------------------------------------------------------------------------------
@@ -56,9 +56,9 @@ testGroupForFile("__FILE__", "createStringifier()", () => {
             builder.stringifyIf(extendedHandler.appliesTo, extendedHandler.stringify)
         );
 
-        nodeModules.assert.strictEqual(stringifyExtended(123), expectedNumberResult);
-        nodeModules.assert.strictEqual(stringifyExtended("a"), expectedStringResult);
-        nodeModules.assert.deepStrictEqual(
+        assert.strictEqual(stringifyExtended(123), expectedNumberResult);
+        assert.strictEqual(stringifyExtended("a"), expectedStringResult);
+        assert.deepStrictEqual(
             ((stringifyExtended as any).engine as StringifierEngine<any, any>).defaultOptions,
             { a: 1, b: 3, c: 4 }
         );

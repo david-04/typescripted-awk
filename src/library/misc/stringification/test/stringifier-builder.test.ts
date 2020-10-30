@@ -16,8 +16,8 @@ testGroupForFile("__FILE__", "constructor()", () => {
         const stringifierOptions = { b: { d: 4, e: 5 } };
         const stringifierBuilder = new StringifierBuilder(baseStringifier, deepClone(stringifierOptions));
 
-        nodeModules.assert.deepStrictEqual(stringifierBuilder.options, { a: 1, b: { c: 2, d: 4, e: 5 } });
-        nodeModules.assert.deepStrictEqual(baseStringifier.defaultOptions, baseStringifierOptions);
+        assert.deepStrictEqual(stringifierBuilder.options, { a: 1, b: { c: 2, d: 4, e: 5 } });
+        assert.deepStrictEqual(baseStringifier.defaultOptions, baseStringifierOptions);
     });
 });
 
@@ -80,7 +80,7 @@ testGroupForFile("__FILE__", () => {
 
                 const builder = new StringifierBuilder(new StringifierEngine([], {}), {});
                 getSetter(builder).bind(builder)(() => expectedOutput);
-                nodeModules.assert.strictEqual(builder.handlers.length, 1);
+                assert.strictEqual(builder.handlers.length, 1);
             });
 
             for (const valueAsString of testData.map(value => value.trim())) {
@@ -90,12 +90,12 @@ testGroupForFile("__FILE__", () => {
                 const description = shouldApply ? "accepts" : "does not accept";
 
                 testCase(`Adds a handler that ${description} ${valueAsString}`, () => {
-                    nodeModules.assert.strictEqual(createBuilderAndGetHandler().appliesTo(value), shouldApply);
+                    assert.strictEqual(createBuilderAndGetHandler().appliesTo(value), shouldApply);
                 });
             }
 
             testCase("Adds the specified stringification function", () => {
-                nodeModules.assert.strictEqual(
+                assert.strictEqual(
                     createBuilderAndGetHandler().stringify("input", null as any as StringifierContext<any>),
                     expectedOutput
                 );
@@ -126,7 +126,7 @@ testGroupForFile("__FILE__", "stringifyIf()", () => {
 
         const builder = new StringifierBuilder(new StringifierEngine([], {}), {});
         builder.stringifyIf(() => true, () => "");
-        nodeModules.assert.strictEqual(builder.handlers.length, 1);
+        assert.strictEqual(builder.handlers.length, 1);
     });
 
     testCase("Adds the specified 'appliesTo' function", () => {
@@ -134,8 +134,8 @@ testGroupForFile("__FILE__", "stringifyIf()", () => {
         const expectedAppliesTo = (value: any) => "number" === typeof value || "string" === typeof value;
         const builder = new StringifierBuilder(new StringifierEngine([], {}), {});
         builder.stringifyIf(expectedAppliesTo, () => "");
-        nodeModules.assert.strictEqual(builder.handlers.length, 1);
-        nodeModules.assert.strictEqual(builder.handlers[0].appliesTo, expectedAppliesTo);
+        assert.strictEqual(builder.handlers.length, 1);
+        assert.strictEqual(builder.handlers[0].appliesTo, expectedAppliesTo);
     });
 
     testCase("Adds the specified stringification function", () => {
@@ -143,8 +143,8 @@ testGroupForFile("__FILE__", "stringifyIf()", () => {
         const expectedStringify = (value: any) => `<${value}>`;
         const builder = new StringifierBuilder(new StringifierEngine([], {}), {});
         builder.stringifyIf(() => true, expectedStringify);
-        nodeModules.assert.strictEqual(builder.handlers.length, 1);
-        nodeModules.assert.strictEqual(builder.handlers[0].stringify, expectedStringify);
+        assert.strictEqual(builder.handlers.length, 1);
+        assert.strictEqual(builder.handlers[0].stringify, expectedStringify);
     });
 
     testCase("Adds multiple handlers", () => {
@@ -156,7 +156,7 @@ testGroupForFile("__FILE__", "stringifyIf()", () => {
 
         const builder = new StringifierBuilder(new StringifierEngine([], {}), {});
         expectedHandlers.forEach(handler => builder.stringifyIf(handler.appliesTo, handler.stringify));
-        nodeModules.assert.deepStrictEqual(builder.handlers, expectedHandlers);
+        assert.deepStrictEqual(builder.handlers, expectedHandlers);
     });
 });
 

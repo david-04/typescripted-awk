@@ -28,7 +28,7 @@ testGroupForFile("__FILE__", () => {
         input.b.d *= 10;
         input.b = { c: 100, d: 300 };
 
-        nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);
+        assert.deepStrictEqual(actualOutput, expectedOutput);
     });
 
     //------------------------------------------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ testGroupForFile("__FILE__", () => {
         input[1][1] *= 10;
         input[1] = [300, 400];
 
-        nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);
+        assert.deepStrictEqual(actualOutput, expectedOutput);
     });
 
     //------------------------------------------------------------------------------------------------------------------
@@ -66,12 +66,9 @@ testGroupForFile("__FILE__", () => {
         input.nested.value.a *= 10;
         input.nested = new MyNestedClass({ a: 200 });
 
-        nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);
-        nodeModules.assert.ok(actualOutput instanceof MyClass, "The clone is not an instance of MyClass");
-        nodeModules.assert.ok(
-            actualOutput.nested instanceof MyNestedClass,
-            "The clone does not contain an instance of MyNestedClass"
-        );
+        assert.deepStrictEqual(actualOutput, expectedOutput);
+        assert.ok(actualOutput instanceof MyClass, "The clone is not an instance of MyClass");
+        assert.ok(actualOutput.nested instanceof MyNestedClass, "The clone does not contain an instance of MyNestedClass");
     });
 
     //------------------------------------------------------------------------------------------------------------------
@@ -93,7 +90,7 @@ testGroupForFile("__FILE__", () => {
 
         input.a *= 2;
 
-        nodeModules.assert.deepStrictEqual(actualOutput, expectedOutput);
-        nodeModules.assert.deepStrictEqual(actualOutput.b.c.a, expectedOutput.b.c.a);
+        assert.deepStrictEqual(actualOutput, expectedOutput);
+        assert.deepStrictEqual(actualOutput.b.c.a, expectedOutput.b.c.a);
     });
 });

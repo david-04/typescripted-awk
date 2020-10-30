@@ -8,6 +8,6 @@ testGroupForFile("__FILE__", () => {
 
         const value = "stringified value";
         const stringifiedValue = new StringifiedValue(value);
-        nodeModules.assert.strictEqual(stringifiedValue.stringifiedValue, value);
+        assert.strictEqual(stringifiedValue.stringifiedValue, value);
     });
 });
