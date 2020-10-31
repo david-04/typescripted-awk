@@ -48,7 +48,7 @@ class StringifierEngine<B, T extends B> implements ContextualStringifier<T> {
                     while (++index < stack.length - 1) {
                         reference += "/.."
                     }
-                    return new StringifiedValue(`[circular reference: ${reference}]`);
+                    return preStringify(undefined).as(`[circular reference: ${reference}]`);
                 }
             }
 
@@ -72,7 +72,7 @@ class StringifierEngine<B, T extends B> implements ContextualStringifier<T> {
 
     public stringifyWithContext(value: any, context: StringifierContext<T>) {
 
-        if (value instanceof StringifiedValue) {
+        if (value instanceof internal.PreStringifiedValue) {
             return value.stringifiedValue;
         }
 

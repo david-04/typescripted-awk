@@ -1,3 +1,5 @@
+type ValueOrPreStringified<T> = T | internal.PreStringifiedValue<T>;
+
 //----------------------------------------------------------------------------------------------------------------------
 // A template test case for data-driven test repetitions.
 //----------------------------------------------------------------------------------------------------------------------
@@ -18,7 +20,7 @@ class TestTemplate<R> extends Checks<R>{
         ...parameters: Array<any>
     ) {
         super();
-        this.parameters = parameters.map(parameter => parameter instanceof Value ? parameter.value : parameter);
+        this.parameters = parameters.map(param => param instanceof internal.PreStringifiedValue ? param.value : param);
         this.descriptor = (this.descriptorSupplier as Function)(...this.parameters) as TestDescriptor<R>;
         this.description = this.replacePlaceholderValues(this.descriptor.description, parameters);
         if (Array.isArray(this.descriptor.group)) {
@@ -46,7 +48,7 @@ class TestTemplate<R> extends Checks<R>{
                 output += input.substr(0, match.index);
                 input = input.substr(match.index + placeholder.length)
                 if (placeholder !== "$$") {
-                    output += stringifyValue(parameters[parseInt(placeholder.substr(1)) - 1]);
+                    output += stringify(parameters[parseInt(placeholder.substr(1)) - 1]);
                 } else {
                     output += placeholder;
                 }
@@ -135,6 +137,7 @@ class TestTemplate<R> extends Checks<R>{
     }
 }
 
+
 //----------------------------------------------------------------------------------------------------------------------
 // Test templates per number of parameters.
 //----------------------------------------------------------------------------------------------------------------------
@@ -149,55 +152,55 @@ class TestTemplate0<R> extends TestTemplate<R> {
 }
 
 class TestTemplate1<T1, R> extends TestTemplate<R> {
-    public when(p1: T1): this {
+    public when(p1: ValueOrPreStringified<T1>): this {
         return new TestTemplate1<T1, R>(this.descriptorSupplier, p1) as any as this;
     }
 }
 
 class TestTemplate2<T1, T2, R> extends TestTemplate<R> {
-    public when(p1: T1, p2: T2): this {
+    public when(p1: ValueOrPreStringified<T1>, p2: ValueOrPreStringified<T2>): this {
         return new TestTemplate2<T1, T2, R>(this.descriptorSupplier, p1, p2) as any as this;
     }
 }
 
 class TestTemplate3<T1, T2, T3, R> extends TestTemplate<R> {
-    public when(p1: T1, p2: T2, p3: T3): this {
+    public when(p1: ValueOrPreStringified<T1>, p2: ValueOrPreStringified<T2>, p3: ValueOrPreStringified<T3>): this {
         return new TestTemplate3<T1, T2, T3, R>(this.descriptorSupplier, p1, p2, p3) as any as this;
     }
 }
 
 class TestTemplate4<T1, T2, T3, T4, R> extends TestTemplate<R> {
-    public when(p1: T1, p2: T2, p3: T3, p4: T4): this {
+    public when(p1: ValueOrPreStringified<T1>, p2: ValueOrPreStringified<T2>, p3: ValueOrPreStringified<T3>, p4: ValueOrPreStringified<T4>): this {
         return new TestTemplate4<T1, T2, T3, T4, R>(this.descriptorSupplier, p1, p2, p3, p4) as any as this;
     }
 }
 
 class TestTemplate5<T1, T2, T3, T4, T5, R> extends TestTemplate<R> {
-    public when(p1: T1, p2: T2, p3: T3, p4: T4, p5: T5): this {
+    public when(p1: ValueOrPreStringified<T1>, p2: ValueOrPreStringified<T2>, p3: ValueOrPreStringified<T3>, p4: ValueOrPreStringified<T4>, p5: ValueOrPreStringified<T5>): this {
         return new TestTemplate5<T1, T2, T3, T4, T5, R>(this.descriptorSupplier, p1, p2, p3, p4, p5) as any as this;
     }
 }
 
 class TestTemplate6<T1, T2, T3, T4, T5, T6, R> extends TestTemplate<R> {
-    public when(p1: T1, p2: T2, p3: T3, p4: T4, p5: T5, p6: T6): this {
+    public when(p1: ValueOrPreStringified<T1>, p2: ValueOrPreStringified<T2>, p3: ValueOrPreStringified<T3>, p4: ValueOrPreStringified<T4>, p5: ValueOrPreStringified<T5>, p6: ValueOrPreStringified<T6>): this {
         return new TestTemplate6<T1, T2, T3, T4, T5, T6, R>(this.descriptorSupplier, p1, p2, p3, p4, p5, p6) as any as this;
     }
 }
 
 class TestTemplate7<T1, T2, T3, T4, T5, T6, T7, R> extends TestTemplate<R> {
-    public when(p1: T1, p2: T2, p3: T3, p4: T4, p5: T5, p6: T6, p7: T7): this {
+    public when(p1: ValueOrPreStringified<T1>, p2: ValueOrPreStringified<T2>, p3: ValueOrPreStringified<T3>, p4: ValueOrPreStringified<T4>, p5: ValueOrPreStringified<T5>, p6: ValueOrPreStringified<T6>, p7: ValueOrPreStringified<T7>): this {
         return new TestTemplate7<T1, T2, T3, T4, T5, T6, T7, R>(this.descriptorSupplier, p1, p2, p3, p4, p5, p6, p7) as any as this;
     }
 }
 
 class TestTemplate8<T1, T2, T3, T4, T5, T6, T7, T8, R> extends TestTemplate<R> {
-    public when(p1: T1, p2: T2, p3: T3, p4: T4, p5: T5, p6: T6, p7: T7, p8: T8): this {
+    public when(p1: ValueOrPreStringified<T1>, p2: ValueOrPreStringified<T2>, p3: ValueOrPreStringified<T3>, p4: ValueOrPreStringified<T4>, p5: ValueOrPreStringified<T5>, p6: ValueOrPreStringified<T6>, p7: ValueOrPreStringified<T7>, p8: ValueOrPreStringified<T8>): this {
         return new TestTemplate8<T1, T2, T3, T4, T5, T6, T7, T8, R>(this.descriptorSupplier, p1, p2, p3, p4, p5, p6, p7, p8) as any as this;
     }
 }
 
 class TestTemplate9<T1, T2, T3, T4, T5, T6, T7, T8, T9, R> extends TestTemplate<R> {
-    public when(p1: T1, p2: T2, p3: T3, p4: T4, p5: T5, p6: T6, p7: T7, p8: T8, p9: T9): this {
+    public when(p1: ValueOrPreStringified<T1>, p2: ValueOrPreStringified<T2>, p3: ValueOrPreStringified<T3>, p4: ValueOrPreStringified<T4>, p5: ValueOrPreStringified<T5>, p6: ValueOrPreStringified<T6>, p7: ValueOrPreStringified<T7>, p8: ValueOrPreStringified<T8>, p9: ValueOrPreStringified<T9>): this {
         return new TestTemplate9<T1, T2, T3, T4, T5, T6, T7, T8, T9, R>(this.descriptorSupplier, p1, p2, p3, p4, p5, p6, p7, p8, p9) as any as this;
     }
 }

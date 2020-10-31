@@ -17,8 +17,8 @@ abstract class Checks<R> {
 
     public returns(expectedValue: R): this {
         return this.runTestAndValidateResult(
-            `returns ${stringifyValue(expectedValue)}`,
-            result => expect(result).toBeEqualTo(expectedValue instanceof Value ? expectedValue.value : expectedValue)
+            `returns ${stringify(expectedValue)}`,
+            result => expect(result).toBeEqualTo(expectedValue instanceof internal.PreStringifiedValue ? expectedValue.value : expectedValue)
         );
     }
 
@@ -26,7 +26,7 @@ abstract class Checks<R> {
     // Verify that a specific exception is thrown.
     //------------------------------------------------------------------------------------------------------------------
 
-    public throwsError(expectedError: Error): this {
+    public throwsError(expectedError: ValueOrPreStringified<Error>): this {
         return this.runTestAndValidateError(
             `throws ${stringifyErrorForDisplay(expectedError)}`,
             actualError => expect(stringifyErrorForComparison(actualError))

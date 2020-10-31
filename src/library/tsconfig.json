@@ -120,8 +120,8 @@
     "data/object/deep-merge.ts",
     "data/object/test/deep-merge.test.ts",
 
-    "misc/stringification/stringified-value.ts",
-    "misc/stringification/test/stringified-value.test.ts",
+    "misc/stringification/pre-stringified-value.ts",
+    "misc/stringification/test/pre-stringified-value.test.ts",
     "misc/stringification/stringifier-context.ts",
     "misc/stringification/test/stringifier-context.test.ts",
     "misc/stringification/stringifier-engine.ts",
@@ -137,14 +137,15 @@
     // Data-driven test framework
     //------------------------------------------------------------------------------------------------------------------
 
+    "misc/unit-test/values.ts",
+
     "internal/test-tools/expect.ts",
 
-    "internal/test-tools/values.ts",
     "internal/test-tools/checks.ts",
     "internal/test-tools/test-template.ts",
 
-    "misc/fail.ts",
-    "misc/test/fail.test.ts",
+    "misc/error/fail.ts",
+    "misc/error/test/fail.test.ts",
 
     "internal/inject-export.ts"
   ]

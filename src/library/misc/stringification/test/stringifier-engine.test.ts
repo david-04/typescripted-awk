@@ -80,7 +80,7 @@ testGroupForFile("__FILE__", "stringifyWithOptions()", () => {
         const stringifier = new StringifierEngine([], {});
         const expectedOutput = "output";
 
-        const actualOutput = stringifier.stringifyWithOptions(new StringifiedValue(expectedOutput), {});
+        const actualOutput = stringifier.stringifyWithOptions(preStringify(undefined).as(expectedOutput), {});
 
         assert.deepStrictEqual(actualOutput, expectedOutput);
     });

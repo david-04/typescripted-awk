@@ -61,7 +61,7 @@ build/unit-test/unit-test.js : build/unit-test/unit-test.ts
 	mv -f build/unit-test/output/unit-test.js build/unit-test/
 	rm -rf build/unit-test/output
 
-build/unit-test/unit-test.ts : build/library/tsawk.ts $(UNIT_TEST_SOURCES) build/scripts/cat-typescript-sources.js
+build/unit-test/unit-test.ts : typecheck build/library/tsawk.ts $(UNIT_TEST_SOURCES) build/scripts/cat-typescript-sources.js
 	echo $@
 	mkdir -p build/unit-test
 	cp build/library/tsawk.ts $@.tmp
