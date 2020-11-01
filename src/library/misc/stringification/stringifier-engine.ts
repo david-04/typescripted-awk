@@ -18,7 +18,7 @@ class StringifierEngine<B, T extends B> implements ContextualStringifier<T> {
     //------------------------------------------------------------------------------------------------------------------
 
     constructor(
-        private readonly handlers: Array<StringifierHandler<T>>,
+        private readonly handlers: StringifierHandler<T>[],
         public readonly defaultOptions: T,
         public readonly baseStringifier?: StringifierEngine<any, B>
     ) { }
@@ -40,7 +40,7 @@ class StringifierEngine<B, T extends B> implements ContextualStringifier<T> {
     // Determine if the given object contains circular references.
     //------------------------------------------------------------------------------------------------------------------
 
-    private containsCircularReferences(value: any, stack: Array<any>) {
+    private containsCircularReferences(value: any, stack: any[]) {
 
         let isCircular = false;
 
@@ -74,7 +74,7 @@ class StringifierEngine<B, T extends B> implements ContextualStringifier<T> {
     // Remove circular references with a notification message.
     //------------------------------------------------------------------------------------------------------------------
 
-    private removeCircularReferences(value: any, stack: Array<any>) {
+    private removeCircularReferences(value: any, stack: any[]) {
 
         if (isObject(value)) {
 

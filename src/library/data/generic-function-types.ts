@@ -376,7 +376,7 @@ namespace internal {
     // @type    T The type of the value (and array elements).
     //------------------------------------------------------------------------------------------------------------------
 
-    export type ValueOrArray<T> = T | Array<T>;
+    export type ValueOrArray<T> = T | T[];
 
     //------------------------------------------------------------------------------------------------------------------
     // A value or a function that can be called to produce the value.

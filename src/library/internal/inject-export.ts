@@ -2,7 +2,7 @@
 // Inject the given items (functions, variables and the likes) into the specified module.
 //----------------------------------------------------------------------------------------------------------------------
 
-exports.injectExports = (module: any, moduleItems: Array<string>, globalItems: Array<string>) => {
+exports.injectExports = (module: any, moduleItems: string[], globalItems: string[]) => {
     injectExportedItems(module, moduleItems);
     injectExportedItems(global, globalItems);
 }
@@ -11,7 +11,7 @@ exports.injectExports = (module: any, moduleItems: Array<string>, globalItems: A
 // Export the selected items into the given module.
 //----------------------------------------------------------------------------------------------------------------------
 
-function injectExportedItems(target: any, items: Array<string>) {
+function injectExportedItems(target: any, items: string[]) {
     for (const item of items) {
         if (module.exports[item]) {
             target[item] = module.exports[item];

@@ -22,7 +22,7 @@ namespace internal {
     // @type    T The class providing the applicable assertions
     //------------------------------------------------------------------------------------------------------------------
 
-    export interface TestTemplate<P extends Array<any>, T> {
+    export interface TestTemplate<P extends any[], T> {
 
         //--------------------------------------------------------------------------------------------------------------
         // Instantiate the test template with the given set of test data.
@@ -38,7 +38,7 @@ namespace internal {
 // Implementation of the internal.TestTemplate.
 //----------------------------------------------------------------------------------------------------------------------
 
-class TestTemplate<P extends Array<any>, R, T extends TestTemplate<P, R, any>>
+class TestTemplate<P extends any[], R, T extends TestTemplate<P, R, any>>
     extends internal.TestAssertions<P, R>
     implements internal.TestTemplate<P, T> {
 
@@ -117,7 +117,7 @@ class TestTemplate<P extends Array<any>, R, T extends TestTemplate<P, R, any>>
 // @level   3
 //----------------------------------------------------------------------------------------------------------------------
 
-function testTemplate<R extends undefined | null | boolean | number | string | Function | object, P extends Array<any>>(
+function testTemplate<R extends undefined | null | boolean | number | string | Function | object, P extends any[]>(
     supplier: (...parameters: P) => internal.TestDescriptor<R>
 ): internal.TestTemplate<P, internal.TestAssertionsAny<P, R>>;
 
@@ -129,7 +129,7 @@ function testTemplate<R extends undefined | null | boolean | number | string | F
 // @level   3
 //----------------------------------------------------------------------------------------------------------------------
 
-function testTemplate<P extends Array<any>>(
+function testTemplate<P extends any[]>(
     supplier: (...parameters: P) => internal.TestDescriptor<void | never>
 ): internal.TestTemplate<P, internal.TestAssertionsVoid<P>>;
 
@@ -142,6 +142,6 @@ function testTemplate<P extends Array<any>>(
 // @level   3
 //----------------------------------------------------------------------------------------------------------------------
 
-function testTemplate<R, P extends Array<any>>(supplier: (...parameters: P) => internal.TestDescriptor<R>) {
+function testTemplate<R, P extends any[]>(supplier: (...parameters: P) => internal.TestDescriptor<R>) {
     return new TestTemplate(supplier);
 }

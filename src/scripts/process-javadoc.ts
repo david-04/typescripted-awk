@@ -80,7 +80,7 @@ function splitCodeAndJavaDocComments(content: string) {
 // Move line breaks before comments to the preceding block and remove line breaks after a comment block
 //----------------------------------------------------------------------------------------------------------------------
 
-function moveLineBreaksBeforeCommentsToPrecedingSection(sections: Array<CodeSection>) {
+function moveLineBreaksBeforeCommentsToPrecedingSection(sections: CodeSection[]) {
 
     for (let index = 1; index < sections.length; index++) {
         if (sections[index].isComment) {
@@ -97,7 +97,7 @@ function moveLineBreaksBeforeCommentsToPrecedingSection(sections: Array<CodeSect
 // Remove extra empty lines after each comment.
 //----------------------------------------------------------------------------------------------------------------------
 
-function removeEmptyLinesAfterComments(sections: Array<CodeSection>) {
+function removeEmptyLinesAfterComments(sections: CodeSection[]) {
 
     for (let index = 1; index < sections.length; index++) {
         if (sections[index - 1].isComment) {
@@ -110,7 +110,7 @@ function removeEmptyLinesAfterComments(sections: Array<CodeSection>) {
 // Remove comments that are not followed by another comment (witout any code in between).
 //----------------------------------------------------------------------------------------------------------------------
 
-function removeCommentsWithoutCode(sections: Array<CodeSection>) {
+function removeCommentsWithoutCode(sections: CodeSection[]) {
 
     for (let index = 0; index < sections.length; index++) {
         if (sections[index].isComment) {
@@ -285,7 +285,7 @@ function processLevelTag(comment: Comment) {
 // Verify that only known tags are being used.
 //----------------------------------------------------------------------------------------------------------------------
 
-function validateTags(usedTags: Array<string>) {
+function validateTags(usedTags: string[]) {
 
     const knownTags = ["param", "return", "typeParam"];
     const unknownTags = usedTags.filter(tag => !knownTags.filter(knownTag => `@${knownTag}` === tag).length).join(", ");

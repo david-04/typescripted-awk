@@ -12,7 +12,7 @@ function getFilesFromTsconfigJson(file: string) {
 
     const json = JSON.parse(fs.readFileSync(file, "utf8").replace(/\/\/[^\n]*/g, ""));
     if (Array.isArray(json.files) && json.files.length) {
-        return json.files as Array<string>;
+        return json.files as string[];
     } else {
         throw new Error(`ERROR: ${file} does not contain any files`);
     }

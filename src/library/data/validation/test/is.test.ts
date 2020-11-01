@@ -8,7 +8,7 @@ testGroupForFile("__FILE__", () => {
         public myMethod() { }
     }
 
-    type Anything = undefined | null | boolean | number | string | Array<any> | MyClass | Function;
+    type Anything = undefined | null | boolean | number | string | any[] | MyClass | Function;
 
     const testData = [
         "undefined     ",
@@ -188,7 +188,7 @@ testGroupForFile("__FILE__", () => {
 
         testCase("The type guard binds to the object type", () => {
 
-            const myObject = new MyClass() as Exclude<Anything, Array<any>>;
+            const myObject = new MyClass() as Exclude<Anything, any[]>;
 
             // @ts-expect-error - it could be any type
             myObject.myMethod();
@@ -205,7 +205,7 @@ testGroupForFile("__FILE__", () => {
             type interface1 = { method1: internal.Supplier<boolean> };
             type interface2 = { method1: internal.Supplier<boolean>, method2: internal.Supplier<boolean> }
             const myObject = { method1: () => true, method2: () => true } as
-                Exclude<Anything, Array<any> | MyClass> | interface1 | interface2;
+                Exclude<Anything, any[] | MyClass> | interface1 | interface2;
 
             // @ts-expect-error - it could be any type
             myObject.method1();
@@ -243,7 +243,7 @@ testGroupForFile("__FILE__", () => {
 
         testCase("The type guard binds to the array's type", () => {
 
-            const myArray = ['abc'] as Exclude<Anything, Array<any>> | Array<string>;
+            const myArray = ['abc'] as Exclude<Anything, any[]> | string[];
 
             // @ts-expect-error - it could be any type
             myArray.length;
@@ -253,7 +253,7 @@ testGroupForFile("__FILE__", () => {
                 // it's typed as array
                 myArray.length;
 
-                // the type is narrowed down to Array<string>
+                // the type is narrowed down to string[]
                 myArray[0].toLowerCase();
             }
         });
@@ -263,7 +263,7 @@ testGroupForFile("__FILE__", () => {
             type interface1 = { method1: internal.Supplier<boolean> };
             type interface2 = { method1: internal.Supplier<boolean>, method2: internal.Supplier<boolean> }
             const myArray = [{ method1: () => true, method2: () => true }] as
-                Exclude<Anything, Array<any> | MyClass> | Array<interface1> | Array<interface2>;
+                Exclude<Anything, any[] | MyClass> | interface1[] | interface2[];
 
             // @ts-expect-error - it could be any type
             myArray.length;
@@ -273,10 +273,10 @@ testGroupForFile("__FILE__", () => {
                 // it's typed as array
                 myArray.length;
 
-                // the typed as Array<interface1> | Array<interface2> - and both have method1
+                // the typed as interface1[] | interface2[] - and both have method1
                 myArray[0].method1();
 
-                // @ts-expect-error - it could be Array<interface1> which does not have method2
+                // @ts-expect-error - it could be interface1[] which does not have method2
                 myArray[0].method2();
             }
         });

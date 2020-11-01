@@ -32,7 +32,7 @@ function format(format: string, ...values: any) {
 // Replace the $* placeholder with a variable list of placeholders (e.g. $2, $3, $4).
 //------------------------------------------------------------------------------------------------------------------
 
-function replaceVariableArgumentList(format: string, values: Array<any>) {
+function replaceVariableArgumentList(format: string, values: any[]) {
 
     if (format.indexOf("$*") < 0) {
         return format;

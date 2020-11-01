@@ -23,7 +23,7 @@ testGroupForFile("__FILE__", () => {
     function testObject(
         description: string,
         options: Partial<DefaultStringifierOptions> | undefined,
-        value: object | Array<any>,
+        value: object | any[],
         expectedResult: string
     ) {
         testCase(description, () => {

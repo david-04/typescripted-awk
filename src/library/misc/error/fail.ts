@@ -13,7 +13,7 @@
 // @level 3
 //----------------------------------------------------------------------------------------------------------------------
 
-function fail(...messageErrorOrSupplier: Array<internal.ValueOrSupplier<string | Error>>): never {
+function fail(...messageErrorOrSupplier: internal.ValueOrSupplier<string | Error>[]): never {
 
     let error: Error | undefined;
 

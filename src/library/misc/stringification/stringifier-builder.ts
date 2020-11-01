@@ -80,7 +80,7 @@ namespace internal {
         // @param   stringify A function that stringifies the given array.
         //--------------------------------------------------------------------------------------------------------------
 
-        public stringifyArray(stringify: StringificationHandler<Array<any>, T>): this {
+        public stringifyArray(stringify: StringificationHandler<any[], T>): this {
             return this.stringifyIf(isArray, stringify);
         }
 

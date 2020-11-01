@@ -145,7 +145,7 @@ function stringifyFunction(value: Function, breakLines: boolean | "auto") {
 // Stringify an array.
 //----------------------------------------------------------------------------------------------------------------------
 
-function stringifyArray(values: Array<any>, context: internal.StringifierContext<DefaultStringifierOptions>) {
+function stringifyArray(values: any[], context: internal.StringifierContext<DefaultStringifierOptions>) {
 
     let { breakLines } = context.options;
     if ("auto" === breakLines) {

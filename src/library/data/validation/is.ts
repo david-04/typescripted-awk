@@ -80,9 +80,9 @@ function isObject(value: any): value is object {
 // @level   3
 //----------------------------------------------------------------------------------------------------------------------
 
-function isArray<T extends Array<any>>(
-    value: Exclude<T, Function> | undefined | null | boolean | number | string | Array<any>
-): value is Array<any>;
+function isArray<T extends any[]>(
+    value: Exclude<T, Function> | undefined | null | boolean | number | string | any[]
+): value is any[];
 
 //----------------------------------------------------------------------------------------------------------------------
 // Type guard to verify that the given value is an array.
@@ -91,7 +91,7 @@ function isArray<T extends Array<any>>(
 // @level   3
 //----------------------------------------------------------------------------------------------------------------------
 
-function isArray<T, A extends Array<T>>(
+function isArray<T, A extends T[]>(
     value: A | undefined | null | boolean | number | string | object | Function
 ): value is A;
 
@@ -102,7 +102,7 @@ function isArray<T, A extends Array<T>>(
 // @level   3
 //----------------------------------------------------------------------------------------------------------------------
 
-function isArray(value: any): value is Array<any> {
+function isArray(value: any): value is any[] {
     return Array.isArray(value);
 }
 
@@ -114,7 +114,7 @@ function isArray(value: any): value is Array<any> {
 //----------------------------------------------------------------------------------------------------------------------
 
 function isFunction<T extends Function>(
-    value: Exclude<T, Function> | undefined | null | boolean | number | string | Array<any>
+    value: Exclude<T, Function> | undefined | null | boolean | number | string | any[]
     //@ts-ignore
 ): value is internal.AnyFunction;
 
@@ -126,7 +126,7 @@ function isFunction<T extends Function>(
 //----------------------------------------------------------------------------------------------------------------------
 
 function isFunction<T extends Function>(
-    value: T | null | undefined | boolean | number | string | object | Array<any>
+    value: T | null | undefined | boolean | number | string | object | any[]
 ): value is T;
 
 //----------------------------------------------------------------------------------------------------------------------
