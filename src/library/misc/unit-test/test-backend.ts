@@ -2,27 +2,28 @@
 // An abstraction layer representing a test backend like Jest or Jasmine.
 //----------------------------------------------------------------------------------------------------------------------
 
-interface TestBackend {
+abstract class TestBackend {
 
-    testGroup(description: string, action: internal.Action): void;
-    testCase(description: string, action: internal.Action): void;
+    protected readonly global: any = global;
+
+    abstract testGroup(description: string, action: internal.Action): void;
+    abstract testCase(description: string, action: internal.Action): void;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 // A facade for Jest.
 //----------------------------------------------------------------------------------------------------------------------
 
-class Jest implements TestBackend {
+class Jest extends TestBackend {
 
-    private readonly describe = (global as any)["describe"];
-    private readonly test = (global as any)["test"];
+    private readonly describe = this.global.describe;
+    private readonly test = this.global.test;
 
     public get isInUse() {
         return 0 < process.argv.filter(argument => argument.match(/jest/i)).length && this.describe && this.test;
     }
 
     public testGroup(description: string, action: internal.Action): void {
-
         this.describe(description, () => { action() });
     }
 
@@ -35,10 +36,10 @@ class Jest implements TestBackend {
 // A facade for Jasmine.
 //----------------------------------------------------------------------------------------------------------------------
 
-class Jasmine implements TestBackend {
+class Jasmine extends TestBackend {
 
-    private readonly describe = (global as any)["describe"];
-    private readonly it = (global as any)["it"];
+    private readonly describe = this.global.describe;
+    private readonly it = this.global.it;
 
     public get isInUse() {
         return 0 < process.argv.filter(argument => argument.match(/jasmine/i)).length && this.describe && this.it;
@@ -57,13 +58,14 @@ class Jasmine implements TestBackend {
 // Built-in test backend.
 //----------------------------------------------------------------------------------------------------------------------
 
-class BuiltInTestBackend implements TestBackend {
+class BuiltInTestBackend extends TestBackend {
 
     private readonly groupStack = new Array<string>();
     private passed = 0;
     private failed = 0;
 
     constructor() {
+        super();
         process.on('beforeExit', () => {
             if (0 < this.failed) {
                 console.log(`${this.passed} passed, ${this.failed} failed`);

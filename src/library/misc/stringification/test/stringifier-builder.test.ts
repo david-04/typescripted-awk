@@ -95,10 +95,8 @@ testGroupForFile("__FILE__", () => {
             }
 
             testCase("Adds the specified stringification function", () => {
-                assert.strictEqual(
-                    createBuilderAndGetHandler().stringify("input", null as any as StringifierContext<any>),
-                    expectedOutput
-                );
+                const context = new StringifierContext({}, { stringifyWithContext: () => "" });
+                assert.strictEqual(createBuilderAndGetHandler().stringify("input", context), expectedOutput);
             });
         });
     }

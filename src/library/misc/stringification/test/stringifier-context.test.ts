@@ -46,16 +46,16 @@ testGroupForFile("__FILE__", () => {
     }
 
     interface ContextState {
-        readonly topLevelStringifier: TestStringifier;
-        readonly currentStringifier: TestStringifier;
+        readonly topLevelStringifier: ContextualStringifier<any>;
+        readonly currentStringifier: ContextualStringifier<any>;
         currentHandlerIndex: number;
         readonly indent: string
     }
 
     function getState(context: TestStringifierContext): ContextState {
         return {
-            topLevelStringifier: context.getTopLevelStringifier() as TestStringifier,
-            currentStringifier: context.currentStringifier as TestStringifier,
+            topLevelStringifier: context.getTopLevelStringifier(),
+            currentStringifier: context.currentStringifier,
             currentHandlerIndex: context.currentHandlerIndex,
             indent: context.indent
         };
@@ -63,7 +63,7 @@ testGroupForFile("__FILE__", () => {
 
     function testStringificationCallback(
         stringificationAction: internal.Function2<TestStringifierContext, any, string>,
-        targetStringifierSelector: internal.Function1<ContextState, TestStringifier>,
+        targetStringifierSelector: internal.Function1<ContextState, ContextualStringifier<any>>,
         getExpectedCallbackState: internal.Function1<ContextState, ContextState>
     ) {
 
@@ -76,7 +76,7 @@ testGroupForFile("__FILE__", () => {
         const value = "value";
 
 
-        const targetStringifier = targetStringifierSelector(initialState);
+        const targetStringifier = targetStringifierSelector(initialState) as TestStringifier;
 
         targetStringifier.onStringifyWithContext((currentValue, currentContext) => {
             assert.strictEqual(currentValue, value);
@@ -156,10 +156,10 @@ testGroupForFile("__FILE__", () => {
 
         testStringificationCallback(
             (context, value) => context.stringifyWithBaseStringifier(value, additionalIndent),
-            initialState => initialState.currentStringifier.baseStringifier as TestStringifier,
+            initialState => initialState.currentStringifier.baseStringifier!,
             initialState => ({
                 topLevelStringifier: initialState.topLevelStringifier,
-                currentStringifier: initialState.currentStringifier.baseStringifier as TestStringifier,
+                currentStringifier: initialState.currentStringifier.baseStringifier!,
                 currentHandlerIndex: 0,
                 indent: initialState.indent + additionalIndent
             })

@@ -96,15 +96,15 @@ testGroupForFile("__FILE__", () => {
 
         testCase("The type guard binds 'any' to 'any'", () => {
 
-            const myString = { a: 1 } as any;
+            const myValue: any = { a: 1 };
 
             // it's "any"
-            myString['a'] = 2;
+            myValue['a'] = 2;
 
-            if (isNotNull(myString)) {
+            if (isNotNull(myValue)) {
 
                 // it's still "any"
-                myString['a'] = 2;
+                myValue['a'] = 2;
             }
         });
     });
@@ -220,9 +220,9 @@ testGroupForFile("__FILE__", () => {
             }
         });
 
-        testCase("The type guard leaves 'any' as 'any'", () => {
+        testCase('The type guard leaves "any" as "any"', () => {
 
-            const myObject = new MyClass() as any;
+            const myObject: any = new MyClass();
 
             if (isObject(myObject)) {
 

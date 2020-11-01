@@ -21,7 +21,7 @@ testGroupForFile("__FILE__", () => {
 
     testCase("Merges properties that are set to undefined", () => {
 
-        const base = { a: 1 as any };
+        const base = { a: 1 };
         const overlay = { a: undefined };
         const expectedOutput = { a: undefined };
 

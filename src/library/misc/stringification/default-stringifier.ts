@@ -113,12 +113,12 @@ const stringifyException = (() => {
         const extraProperties = Object.keys(error).filter(property => !standardErrorProperties.has(property));
 
         if (extraProperties.length) {
-            const clone = {} as any;
+            const clone: any = {};
             if (error.message) {
                 clone.message = error.message;
             }
             for (const property of extraProperties) {
-                (clone as any)[property] = (error as any)[property];
+                clone[property] = (error as any)[property];
             }
             return `${error?.constructor?.name || error.name}(${context.stringifyWithTopLevelStringifier(clone)})`;
         } else {
@@ -223,23 +223,26 @@ function stringifyObject(value: any, context: internal.StringifierContext<Defaul
 // @level   3
 //----------------------------------------------------------------------------------------------------------------------
 
-const stringify = createStringifier(new StringifierEngine([], {
+const stringify = (() => {
 
-    breakLines: "auto" as boolean | "auto",
-    indent: "    " as string,
-    quotes: "auto" as "auto" | '"' | "'" | "`",
-    quotePropertyNames: "auto" as boolean | "auto"
+    const options: DefaultStringifierOptions = {
+        breakLines: "auto",
+        indent: "    ",
+        quotes: "auto",
+        quotePropertyNames: "auto"
+    };
 
-})).createExtendedStringifier(builder => builder
+    return createStringifier(new StringifierEngine([], options)).createExtendedStringifier(builder => builder
 
-    .stringifyIf(value => undefined === value, () => "undefined")
-    .stringifyIf(value => null === value, () => "null")
-    .stringifyBoolean(value => value ? "true" : "false")
-    .stringifyNumber(stringifyNumber)
-    .stringifyString((value, context) => stringifyString(value, context))
-    .stringifyRegExp((value, context) => stringifyRegularExpression(value, context.options))
-    .stringifyIf(value => value instanceof Error, (value, context) => stringifyException(value, context))
-    .stringifyFunction((value, context) => stringifyFunction(value, context.options.breakLines))
-    .stringifyArray((value, context) => stringifyArray(value, context))
-    .stringifyObject((value, context) => stringifyObject(value, context))
-);
+        .stringifyIf(value => undefined === value, () => "undefined")
+        .stringifyIf(value => null === value, () => "null")
+        .stringifyBoolean(value => value ? "true" : "false")
+        .stringifyNumber(stringifyNumber)
+        .stringifyString((value, context) => stringifyString(value, context))
+        .stringifyRegExp((value, context) => stringifyRegularExpression(value, context.options))
+        .stringifyIf(value => value instanceof Error, (value, context) => stringifyException(value, context))
+        .stringifyFunction((value, context) => stringifyFunction(value, context.options.breakLines))
+        .stringifyArray((value, context) => stringifyArray(value, context))
+        .stringifyObject((value, context) => stringifyObject(value, context))
+    );
+})();

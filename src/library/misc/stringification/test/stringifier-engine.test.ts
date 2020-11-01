@@ -118,7 +118,7 @@ testGroupForFile("__FILE__", "stringifyWithOptions()", () => {
             [{ appliesTo: () => true, stringify: () => expectedOutput }], {}
         );
         const stringifier = new StringifierEngine(
-            [{ appliesTo: () => false, stringify: () => "" }], {}, baseStringifier as StringifierEngine<any, any>
+            [{ appliesTo: () => false, stringify: () => "" }], {}, baseStringifier
         );
 
         const actualOutput = stringifier.stringifyWithOptions("", {});

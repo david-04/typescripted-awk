@@ -87,16 +87,17 @@ namespace internal {
 function createStringifier<T extends DefaultStringifierOptions>(stringifierEngine: StringifierEngine<any, T>) {
 
     const stringify = (value: any, options?: Partial<T>) => stringifierEngine.stringifyWithOptions(value, options);
-
     const createExtendedStringifier = <O extends Partial<T>>(
         optionsOrCallback: O | internal.Consumer<internal.StringifierBuilder<T>>,
-        callback?: internal.Consumer<internal.StringifierBuilder<O>>
+        callback?: internal.Consumer<internal.StringifierBuilder<T>>
     ) => {
 
-        const options = isObject(optionsOrCallback) ? optionsOrCallback : {} as O;
+        const options = isObject(optionsOrCallback) ? optionsOrCallback : {};
         const builder = new StringifierBuilder(stringifierEngine, options);
-        if (callback || "function" === typeof optionsOrCallback) {
-            ((callback ?? optionsOrCallback) as any)(builder);
+        if (callback) {
+            callback(builder);
+        } else if ("function" === typeof optionsOrCallback) {
+            optionsOrCallback(builder);
         }
         const newStringifierEngine = new StringifierEngine(
             builder.handlers,

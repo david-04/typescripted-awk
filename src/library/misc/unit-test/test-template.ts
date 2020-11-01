@@ -42,9 +42,7 @@ class TestTemplate<P extends any[], R, T extends TestTemplate<P, R, any>>
     extends internal.TestAssertions<P, R>
     implements internal.TestTemplate<P, T> {
 
-    private descriptor: internal.TestDescriptor<R> = undefined as any;
-    private result: R = undefined as any as R;
-    private exception: any = undefined;
+    private _testRun?: { descriptor: internal.TestDescriptor<R>, result?: R, exception?: any };
 
     //------------------------------------------------------------------------------------------------------------------
     // Initialize a new TestTemplate.
@@ -60,32 +58,44 @@ class TestTemplate<P extends any[], R, T extends TestTemplate<P, R, any>>
 
     public with(...parameters: { [i in keyof P]: P[i] | internal.PreStringifiedValue<P[i]> }): this & T {
 
-        const testTemplate = new TestTemplate(this.supplier);
-        testTemplate.descriptor = (this.supplier as any)(
-            ...parameters.map(param => param instanceof internal.PreStringifiedValue ? param.value : param)
+        const descriptor = this.supplier(
+            ...parameters.map(param => param instanceof internal.PreStringifiedValue ? param.value : param) as P
         );
 
         try {
-            testTemplate.result = testTemplate.descriptor.action();
+            this._testRun = { descriptor, result: descriptor.action() };
         } catch (exception) {
-            testTemplate.exception = exception;
+            this._testRun = { descriptor, exception };
         }
 
-        return testTemplate as any;
+        return this as this & T;
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Getters.
+    //------------------------------------------------------------------------------------------------------------------
+
+    private get testRun() {
+        if (!this._testRun) {
+            throw new Error("A test result validation was invoked before passing any test data");
+        }
+        return this._testRun;
     }
 
     //------------------------------------------------------------------------------------------------------------------
     // Add a test case that performs the given validation on the test action's current return value.
     //------------------------------------------------------------------------------------------------------------------
 
-    protected validateResult(description: string, validate: internal.Function1<R, void>): this {
+    protected validateResult(description: string, validate: internal.Consumer<R>): this {
 
-        testCase(`${this.descriptor.description} ${description}`, () => {
-            if (this.exception) {
-                throw this.exception;
-            } else {
-                validate(this.result);
-            }
+        testGroup(this.testRun.descriptor.group ?? "", () => {
+            testCase(`${this.testRun.descriptor.description} ${description}`, () => {
+                if (this.testRun.exception) {
+                    throw this.testRun.exception;
+                } else {
+                    validate(this.testRun.result!);
+                }
+            });
         });
 
         return this;
@@ -97,12 +107,14 @@ class TestTemplate<P extends any[], R, T extends TestTemplate<P, R, any>>
 
     protected validateException(description: string, validate: internal.Function1<any, void>): this {
 
-        testCase(`${this.descriptor.description} ${description}`, () => {
-            if (!this.exception) {
-                throw new Error("No exception was raised");
-            } else {
-                validate(this.exception);
-            }
+        testGroup(this.testRun.descriptor.group ?? "", () => {
+            testCase(`${this.testRun.descriptor.description} ${description}`, () => {
+                if (!this.testRun.exception) {
+                    throw new Error("No exception was raised");
+                } else {
+                    validate(this.testRun.exception);
+                }
+            });
         });
 
         return this;

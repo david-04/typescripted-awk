@@ -75,7 +75,7 @@ testGroupForFile("__FILE__", () => {
     // Errors
     //------------------------------------------------------------------------------------------------------------------
 
-    testCase("Clones errors (as far as feasible)", () => {
+    testCase("Clones errors (to the extend possible)", () => {
 
         class MyError extends Error {
             constructor(public readonly code: number, message?: string) {

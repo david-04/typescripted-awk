@@ -104,10 +104,7 @@ testGroupForFile("__FILE__", () => {
 
         assert.strictEqual(stringifyExtended(123), expectedNumberResult);
         assert.strictEqual(stringifyExtended("a"), expectedStringResult);
-        assert.deepStrictEqual(
-            ((stringifyExtended as any).engine as StringifierEngine<any, any>).defaultOptions,
-            options({ a: 1, b: 3, c: 4 })
-        );
+        assert.deepStrictEqual(((stringifyExtended as any).engine).defaultOptions, options({ a: 1, b: 3, c: 4 }));
     });
 
     //------------------------------------------------------------------------------------------------------------------
