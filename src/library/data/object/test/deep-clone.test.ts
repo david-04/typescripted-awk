@@ -72,10 +72,31 @@ testGroupForFile("__FILE__", () => {
     });
 
     //------------------------------------------------------------------------------------------------------------------
-    // Circular nesting
+    // Errors
     //------------------------------------------------------------------------------------------------------------------
 
-    testCase("Handles circular nesting", () => {
+    testCase("Clones errors (as far as feasible)", () => {
+
+        class MyError extends Error {
+            constructor(public readonly code: number, message?: string) {
+                super(message);
+            }
+        }
+
+        const input = new MyError(404, "oops");
+        const expectedOutput = new MyError(404, "oops");
+
+        const actualOutput = deepClone(input);
+
+        assert.ok(actualOutput instanceof MyError, "The clone is not an instance of MyError");
+        assert.strictEqual(`${actualOutput}`, `${expectedOutput}`)
+    });
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Circular references
+    //------------------------------------------------------------------------------------------------------------------
+
+    testCase("Replaces circular references", () => {
 
         const createCircularObject = () => {
             const result: any = { a: 1, b: { c: null } };

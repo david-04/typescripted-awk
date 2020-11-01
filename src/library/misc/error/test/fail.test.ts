@@ -5,42 +5,31 @@ testGroupForFile("__FILE__", "fail", () => {
     //------------------------------------------------------------------------------------------------------------------
 
     class MyError extends Error {
-        constructor(message: string) {
+        constructor(message?: string) {
             super(message);
         }
     }
-
-    const myErrorObject = new MyError("oops");
-    const myError = preStringify(myErrorObject).as("myError");
-    const myErrorSupplier = preStringify(() => myErrorObject).as("() => myError");
-
-    type ErrorParam = internal.ValueOrSupplier<string | Error> | undefined;
 
     //------------------------------------------------------------------------------------------------------------------
     // fail()
     //------------------------------------------------------------------------------------------------------------------
 
-    testTemplate((p1: ErrorParam, p2: ErrorParam, p3: ErrorParam) => ({
+    testTemplate((...parameters: internal.ValueOrSupplier<string | Error>[]) => ({
         group: "fail()",
         description: "fail($*)",
-        action: () => {
-            if (undefined === p1) {
-                fail();
-            } else if (undefined === p2) {
-                fail(p1);
-            } else if (undefined === p3) {
-                fail(p1, p2);
-            } else {
-                fail(p1, p2, p3);
-            }
-        }
+        action: () => fail(...parameters)
     }))
-        .when(undefined, undefined, undefined)/*          */.throwsError(new Error(""))
-        .when("", undefined, undefined)/*                 */.throwsError(new Error(""))
-        .when("oops", undefined, undefined)/*             */.throwsError(new Error("oops"))
-        .when(myError, undefined, undefined)/*            */.throwsError(myError)
-        .when(() => "oops", undefined, undefined)/*  */.throwsError(new Error("oops"))
-        .when(myErrorSupplier, undefined, undefined)/*    */.throwsError(myError)
-        .when("1", "2", undefined).throwsError(new Error("1"))
-        ;
+        .with() /*                              */.exceptionIs(new Error(""))
+        .with("") /*                            */.exceptionIs(new Error(""))
+        .with("oops") /*                        */.exceptionIs(new Error("oops"))
+        .with(new Error("oops")) /*             */.exceptionIs(new Error("oops"))
+        .with(new MyError("oops")) /*           */.exceptionIs(new MyError("oops"))
+        .with(() => "") /*                      */.exceptionIs(new Error(""))
+        .with(() => "oops") /*                  */.exceptionIs(new Error("oops"))
+        .with(() => new Error("oops")) /*       */.exceptionIs(new Error("oops"))
+        .with(() => new MyError("oops")) /*     */.exceptionIs(new MyError("oops"))
+        .with("1", "2") /*                      */.exceptionIs(new Error("1"))
+        .with("", "2") /*                       */.exceptionIs(new Error("2"))
+        .with(() => "", "2") /*                 */.exceptionIs(new Error("2"))
+        .with("", () => new Error("oops")) /*   */.exceptionIs(new Error("oops"));
 });

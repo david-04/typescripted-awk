@@ -29,9 +29,45 @@ class StringifierEngine<B, T extends B> implements ContextualStringifier<T> {
 
     public stringifyWithOptions(value: any, options?: Partial<T>) {
         return this.stringifyWithContext(
-            this.removeCircularReferences(deepClone(value), []),
+            this.containsCircularReferences(value, [])
+                ? this.removeCircularReferences(deepClone(value), [])
+                : value,
             new StringifierContext(deepMerge(this.defaultOptions, options ?? {}), this)
         );
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Determine if the given object contains circular references.
+    //------------------------------------------------------------------------------------------------------------------
+
+    private containsCircularReferences(value: any, stack: Array<any>) {
+
+        let isCircular = false;
+
+        if (isObject(value)) {
+            if (stack.filter(parent => parent === value).length) {
+                return true;
+            }
+            stack.push(value);
+            if (isArray(value)) {
+                for (const item of value) {
+                    if (this.containsCircularReferences(item, stack)) {
+                        isCircular = true;
+                        break;
+                    }
+                }
+            } else {
+                for (const key of Object.keys(value)) {
+                    if (this.containsCircularReferences(value[key], stack)) {
+                        isCircular = true;
+                        break;
+                    }
+                }
+            }
+            stack.pop();
+        }
+
+        return isCircular;
     }
 
     //------------------------------------------------------------------------------------------------------------------

@@ -98,6 +98,39 @@ testGroupForFile("__FILE__", () => {
     test({ quotes: '`', breakLines: false }, "1\n2\n3\n4", '"1\\n2\\n3\\n4"', "`1\\n2\\n3\\n4`");
 
     //------------------------------------------------------------------------------------------------------------------
+    // Exceptions
+    //------------------------------------------------------------------------------------------------------------------
+
+    class MyError extends Error {
+        constructor(message?: string) {
+            super(message);
+        }
+    }
+
+    class MyCustomError extends Error {
+        constructor(public readonly code: number, message?: string) {
+            super(message);
+        }
+    }
+
+    test(undefined, new Error(), "new Error()", "Error()");
+    test(undefined, new Error("oops"), 'new Error("oops")', 'Error("oops")');
+    test(undefined, new MyError(), 'new MyError()', 'MyError()');
+    test(undefined, new MyError("oops"), 'new MyError("oops")', 'MyError("oops")');
+    test(
+        { breakLines: false, quotePropertyNames: false },
+        new MyCustomError(1),
+        'new MyCustomError(1)',
+        'MyCustomError({ code: 1 })'
+    );
+    test(
+        { breakLines: false, quotePropertyNames: false, quotes: '"' },
+        new MyCustomError(1, "oops"),
+        'new MyCustomError(1, "oops")',
+        'MyCustomError({ message: "oops", code: 1 })'
+    );
+
+    //------------------------------------------------------------------------------------------------------------------
     // Functions
     //------------------------------------------------------------------------------------------------------------------
 

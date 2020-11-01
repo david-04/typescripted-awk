@@ -1,13 +1,31 @@
-testGroupForFile("__FILE__", "createStringifier()", () => {
+testGroupForFile("__FILE__", () => {
 
     //------------------------------------------------------------------------------------------------------------------
-    // stringify()
+    // Default options
     //------------------------------------------------------------------------------------------------------------------
 
-    testCase("Creates an object that can be called as a function", () => {
+    const defaultOptions: DefaultStringifierOptions = {
+        breakLines: true,
+        indent: "    ",
+        quotePropertyNames: "auto",
+        quotes: "auto"
+    };
+
+    function options(): DefaultStringifierOptions;
+    function options<T>(options: Partial<DefaultStringifierOptions> & T): DefaultStringifierOptions & T;
+    function options<T>(options?: Partial<DefaultStringifierOptions> & T) {
+        return { ...defaultOptions, ...options };
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+    // stringifier(value)
+    //------------------------------------------------------------------------------------------------------------------
+
+    testCase("stringifier(value) returns the stringified representation", () => {
 
         const expectedResult = "stringified-number";
-        const stringifierEngine = new StringifierEngine([{ appliesTo: isNumber, stringify: () => expectedResult }], {});
+        const handler = { appliesTo: isNumber, stringify: () => expectedResult };
+        const stringifierEngine = new StringifierEngine([handler], options());
 
         const stringify = createStringifier(stringifierEngine);
 
@@ -15,14 +33,42 @@ testGroupForFile("__FILE__", "createStringifier()", () => {
     });
 
     //------------------------------------------------------------------------------------------------------------------
+    // stringifier(value, options)
+    //------------------------------------------------------------------------------------------------------------------
+
+    testCase("stringifier(value, options) applies the provided options", () => {
+
+        const stringify = createStringifier(new StringifierEngine(
+            [{ appliesTo: isNumber, stringify: (_value, context) => context.options.indent }], options()
+        ));
+
+        assert.strictEqual(stringify(1, { indent: "..." }), "...");
+        assert.strictEqual(stringify(1, { indent: "\t" }), "\t");
+    });
+
+    //------------------------------------------------------------------------------------------------------------------
+    // stringifier.createExtendedStringifier(options)
+    //------------------------------------------------------------------------------------------------------------------
+
+    testCase("stringifier.createExtendedStringifier(options) registers the options", () => {
+
+        const stringifier = createStringifier(new StringifierEngine(
+            [{ appliesTo: isNumber, stringify: (_value, context) => context.options.indent }],
+            options({ indent: "indent.base" })
+        ));
+
+        assert.strictEqual(stringifier.createExtendedStringifier({ indent: "..." })(1), "...");
+    });
+
+    //------------------------------------------------------------------------------------------------------------------
     // stringify.createExtendedStringifier(callback)
     //------------------------------------------------------------------------------------------------------------------
 
-    testCase("Creates an object that can be extended with handlers", () => {
+    testCase("stringifier.createExtendedStringifier(callback) registers the handlers", () => {
 
         const expectedNumberResult = "stringified-number";
         const baseHandler = { appliesTo: isNumber, stringify: () => expectedNumberResult };
-        const baseStringifier = new StringifierEngine([baseHandler], {});
+        const baseStringifier = new StringifierEngine([baseHandler], options());
 
         const stringifyBase = createStringifier(baseStringifier);
 
@@ -38,14 +84,14 @@ testGroupForFile("__FILE__", "createStringifier()", () => {
     });
 
     //------------------------------------------------------------------------------------------------------------------
-    // stringify.createExtendedStringifier(options, callback)
+    // stringifier.createExtendedStringifier(options, builder)
     //------------------------------------------------------------------------------------------------------------------
 
-    testCase("Creates an object that can be extended with options and and handlers", () => {
+    testCase("stringifier.createExtendedStringifier(options, builder) registers the options and handlers", () => {
 
         const expectedNumberResult = "stringified-number";
         const baseHandler = { appliesTo: isNumber, stringify: () => expectedNumberResult };
-        const baseStringifier = new StringifierEngine([baseHandler], { a: 1, b: 2 });
+        const baseStringifier = new StringifierEngine([baseHandler], options({ a: 1, b: 2 }));
 
         const stringifyBase = createStringifier(baseStringifier);
 
@@ -60,8 +106,38 @@ testGroupForFile("__FILE__", "createStringifier()", () => {
         assert.strictEqual(stringifyExtended("a"), expectedStringResult);
         assert.deepStrictEqual(
             ((stringifyExtended as any).engine as StringifierEngine<any, any>).defaultOptions,
-            { a: 1, b: 3, c: 4 }
+            options({ a: 1, b: 3, c: 4 })
         );
+    });
+
+    //------------------------------------------------------------------------------------------------------------------
+    // stringifier.inline()
+    //------------------------------------------------------------------------------------------------------------------
+
+    testCase("stringifier.inline() uses breakLines = true", () => {
+
+        const baseStringifier = new StringifierEngine(
+            [{ appliesTo: isNumber, stringify: (_value, context) => `${context.options.breakLines}` }],
+            options({ breakLines: "auto" })
+        );
+        const stringify = createStringifier(baseStringifier);
+
+        assert.strictEqual(stringify(1), "auto");
+        assert.strictEqual(stringify.inline(1), "false");
+    });
+
+    //------------------------------------------------------------------------------------------------------------------
+    // stringifier.format()
+    //------------------------------------------------------------------------------------------------------------------
+
+    testCase(`stringify.format("isNumber($1)", { a: 1 }) === 'isNumber({"a":1})'`, () => {
+        const stringify = createStringifier(new StringifierEngine([], options()));
+        assert.strictEqual(stringify.format("isNumber($1)", { a: 1 }), 'isNumber({"a":1})');
+    });
+
+    testCase(`stringify.format("$$$1, $3, $*", true, 0, undefined, "test") === '$true, undefined, 0, "test"'`, () => {
+        const stringify = createStringifier(new StringifierEngine([], options()));
+        assert.strictEqual(stringify.format("$$$1, $3, $*", true, 0, null, "test"), '$true, null, 0, "test"');
     });
 
     //------------------------------------------------------------------------------------------------------------------
@@ -70,7 +146,7 @@ testGroupForFile("__FILE__", "createStringifier()", () => {
 
     testCase("Creates an object that passes the correct option types when extending", () => {
 
-        const stringifier = createStringifier(new StringifierEngine([], { a: 1 }));
+        const stringifier = createStringifier(new StringifierEngine([], options({ a: 1 })));
 
         stringifier.createExtendedStringifier(builder => {
             builder.stringifyBoolean((_value, context) => {

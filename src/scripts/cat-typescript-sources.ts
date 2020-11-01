@@ -1,7 +1,7 @@
 import * as fs from "fs";
 
 getFilesFromTsconfigJson(`${process.argv[2]}/${process.argv[3]}`)
-    .filter(file => ("test" === process.argv[4]) === !!file.match(/(\/test-tools\/|\/test\/|\.test\.)/))
+    .filter(file => ("test" === process.argv[4]) === !!file.match(/(\/test\/|\.test\.|source-map-support)/))
     .map(file => processSourceFile(process.argv[2], file));
 
 //----------------------------------------------------------------------------------------------------------------------

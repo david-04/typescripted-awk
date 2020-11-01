@@ -9,7 +9,6 @@ help :
 	echo test ............. Run all tests
 	echo typedoc .......... Generate the API documentation
 	echo package .......... Assemble the Node package
-	echo typecheck ........ Perform a test compile with node package typings
 	echo clean ............ Delete temporary files
 	echo.
 
@@ -45,23 +44,33 @@ RUN_TEST=$(BUILT_IN_TEST_FRAMEWORK)
 
 LIBRARY_FOLDERS=$(foreach segment, . * */* */*/* */*/*/* */*/*/*/*, src/library/$(segment))
 UNIT_TEST_SOURCES=$(wildcard $(foreach folder, $(LIBRARY_FOLDERS), $(folder)/*.test.ts $(folder)/test-tools/*.ts))
-LIBRARY_SOURCES=$(filter-out $(UNIT_TEST_SOURCES), $(wildcard $(foreach folder, $(LIBRARY_FOLDERS), $(folder)/*.ts))) src/library/tsconfig.json
+LIBRARY_SOURCES=$(filter-out $(UNIT_TEST_SOURCES), $(wildcard $(foreach folder, $(LIBRARY_FOLDERS), $(folder)/*.ts))) \
+			    src/library/tsconfig.json
 
 #-----------------------------------------------------------------------------------------------------------------------
 # build/unit-test
 #-----------------------------------------------------------------------------------------------------------------------
 
-test : build/unit-test/unit-test.js
-	echo Running unit tests
+test : unit-test-dev;
+
+unit-test-% : build/unit-test/unit-test-%.js
+	echo Running unit tests \($*\)
 	$(RUN_TEST) $^
 
-build/unit-test/unit-test.js : build/unit-test/unit-test.ts
+build/unit-test/unit-test-dev.js : src/library/tsconfig.json \
+								   $(UNIT_TEST_SOURCES) \
+								   $(LIBRARY_SOURCES) \
+								   src/library/internal/node-modules.d.ts
 	echo $@
-	$(TSC_STRICT) --sourceMap --outDir build/unit-test/output build/unit-test/unit-test.ts
-	mv -f build/unit-test/output/unit-test.js build/unit-test/
+	$(TSC) --outFile $@ --project src/library
+
+build/unit-test/unit-test-build.js : build/unit-test/unit-test-build.ts
+	echo $@
+	$(TSC_STRICT) --sourceMap --outDir build/unit-test/output build/unit-test/unit-test-build.ts
+	mv -f build/unit-test/output/unit-test-build.js build/unit-test/
 	rm -rf build/unit-test/output
 
-build/unit-test/unit-test.ts : typecheck build/library/tsawk.ts $(UNIT_TEST_SOURCES) build/scripts/cat-typescript-sources.js
+build/unit-test/unit-test-build.ts : build/library/tsawk.ts $(UNIT_TEST_SOURCES) build/scripts/cat-typescript-sources.js
 	echo $@
 	mkdir -p build/unit-test
 	cp build/library/tsawk.ts $@.tmp
@@ -112,7 +121,9 @@ build/library/tsawk.ts : $(LIBRARY_SOURCES) build/scripts/cat-typescript-sources
 	node build/scripts/cat-typescript-sources.js src/library tsconfig.json source > $@.tmp
 	mv -f $@.tmp $@
 
-build/library/tsawk-level-%.js build/library/tsawk-level-%.d.ts : build/library/tsawk.ts build/scripts/process-javadoc.js typecheck
+build/library/tsawk-level-%.js build/library/tsawk-level-%.d.ts : unit-test-build \
+																  build/library/tsawk.ts \
+																  build/scripts/process-javadoc.js
 	echo build/library/tsawk-level-$*.js
 	rm -f build/library/level-$**
 	cp build/library/tsawk.ts build/library/tsawk-level-$*.ts
@@ -164,7 +175,9 @@ build/package/internal/tsawk.js : build/library/tsawk-level-9.js
 	mkdir -p build/package/internal
 	cp $^ $@
 
-build/package/level-%/index.js : build/library/tsawk-level-%.exports build/library/tsawk-level-0.exports src/resources/package/index.js
+build/package/level-%/index.js : build/library/tsawk-level-%.exports \
+								 build/library/tsawk-level-0.exports \
+								 src/resources/package/index.js
 	echo $@
 	mkdir -p build/package/level-$*
 	cat src/resources/package/index.js 						    				 > $@.tmp
@@ -207,16 +220,6 @@ build/package/level-%/global/index.d.ts : build/package/level-%/index.d.ts
 	echo "    }" 																>> $@.tmp
 	echo "}" 																	>> $@.tmp
 	mv -f $@.tmp $@
-
-#-----------------------------------------------------------------------------------------------------------------------
-# build/temp/typecheck.js
-#-----------------------------------------------------------------------------------------------------------------------
-
-typecheck : build/temp/typecheck.js;
-
-build/temp/typecheck.js : src/library/tsconfig.json $(UNIT_TEST_SOURCES) $(LIBRARY_SOURCES) src/library/internal/node-modules.d.ts
-	echo $@
-	$(TSC) --outFile $@ --project src/library
 
 #-----------------------------------------------------------------------------------------------------------------------
 # build/scripts
