@@ -19,7 +19,7 @@ function stringifyNumber(number: number) {
 // Stringify a string.
 //----------------------------------------------------------------------------------------------------------------------
 
-function stringifyString(value: string, context: internal.StringifierContext<DefaultStringifierOptions>) {
+function stringifyString(value: string, context: internal.StringifierContext<internal.StringifierOptions>) {
 
     let { quotes, breakLines } = context.options;
     breakLines = rendersWithLineBreaks(value, context);
@@ -75,7 +75,7 @@ function stringifyString(value: string, context: internal.StringifierContext<Def
 // Determine if a string should be rendered with or without line breaks.
 //----------------------------------------------------------------------------------------------------------------------
 
-function rendersWithLineBreaks(value: string, context: internal.StringifierContext<DefaultStringifierOptions>) {
+function rendersWithLineBreaks(value: string, context: internal.StringifierContext<internal.StringifierOptions>) {
 
     let { breakLines, quotes } = context.options;
 
@@ -90,7 +90,7 @@ function rendersWithLineBreaks(value: string, context: internal.StringifierConte
 // Stringify a regular expression.
 //----------------------------------------------------------------------------------------------------------------------
 
-function stringifyRegularExpression(value: RegExp, options: DefaultStringifierOptions) {
+function stringifyRegularExpression(value: RegExp, options: internal.StringifierOptions) {
 
     let expression = `${value.source}`;
     if (true !== options.breakLines) {
@@ -108,7 +108,7 @@ const stringifyException = (() => {
     const standardErrorProperties = new Set<string>();
     Object.keys(new Error()).forEach(property => standardErrorProperties.add(property));
 
-    return (error: Error, context: internal.StringifierContext<DefaultStringifierOptions>) => {
+    return (error: Error, context: internal.StringifierContext<internal.StringifierOptions>) => {
 
         const extraProperties = Object.keys(error).filter(property => !standardErrorProperties.has(property));
 
@@ -145,7 +145,7 @@ function stringifyFunction(value: Function, breakLines: boolean | "auto") {
 // Stringify an array.
 //----------------------------------------------------------------------------------------------------------------------
 
-function stringifyArray(values: any[], context: internal.StringifierContext<DefaultStringifierOptions>) {
+function stringifyArray(values: any[], context: internal.StringifierContext<internal.StringifierOptions>) {
 
     let { breakLines } = context.options;
     if ("auto" === breakLines) {
@@ -171,7 +171,7 @@ function stringifyArray(values: any[], context: internal.StringifierContext<Defa
 // Stringify an object.
 //----------------------------------------------------------------------------------------------------------------------
 
-function stringifyObject(value: any, context: internal.StringifierContext<DefaultStringifierOptions>) {
+function stringifyObject(value: any, context: internal.StringifierContext<internal.StringifierOptions>) {
 
     const properties = Object.keys(value).map(key => ({ key, value: value[key] }));
 
@@ -225,7 +225,7 @@ function stringifyObject(value: any, context: internal.StringifierContext<Defaul
 
 const stringify = (() => {
 
-    const options: DefaultStringifierOptions = {
+    const options: internal.StringifierOptions = {
         breakLines: "auto",
         indent: "    ",
         quotes: "auto",

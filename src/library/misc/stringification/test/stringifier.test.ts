@@ -4,16 +4,16 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
     // Default options
     //------------------------------------------------------------------------------------------------------------------
 
-    const defaultOptions: DefaultStringifierOptions = {
+    const defaultOptions: internal.StringifierOptions = {
         breakLines: true,
         indent: "    ",
         quotePropertyNames: "auto",
         quotes: "auto"
     };
 
-    function options(): DefaultStringifierOptions;
-    function options<T>(options: Partial<DefaultStringifierOptions> & T): DefaultStringifierOptions & T;
-    function options<T>(options?: Partial<DefaultStringifierOptions> & T) {
+    function options(): internal.StringifierOptions;
+    function options<T>(options: Partial<internal.StringifierOptions> & T): internal.StringifierOptions & T;
+    function options<T>(options?: Partial<internal.StringifierOptions> & T) {
         return { ...defaultOptions, ...options };
     }
 

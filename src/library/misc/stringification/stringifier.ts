@@ -1,15 +1,15 @@
-//----------------------------------------------------------------------------------------------------------------------
-// The default stringifier's options.
-//----------------------------------------------------------------------------------------------------------------------
-
-interface DefaultStringifierOptions {
-    breakLines: boolean | "auto",
-    indent: string,
-    quotes: "auto" | '"' | "'" | "`",
-    quotePropertyNames: boolean | "auto"
-};
-
 namespace internal {
+
+    //----------------------------------------------------------------------------------------------------------------------
+    // The default stringifier's options.
+    //----------------------------------------------------------------------------------------------------------------------
+
+    export interface StringifierOptions {
+        breakLines: boolean | "auto",
+        indent: string,
+        quotes: "auto" | '"' | "'" | "`",
+        quotePropertyNames: boolean | "auto"
+    };
 
     //------------------------------------------------------------------------------------------------------------------
     // A class that employs stringification handlers to turn any kind of object into a string representation.
@@ -84,7 +84,7 @@ namespace internal {
 // Assemble a Stringifier.
 //----------------------------------------------------------------------------------------------------------------------
 
-function createStringifier<T extends DefaultStringifierOptions>(stringifierEngine: StringifierEngine<any, T>) {
+function createStringifier<T extends internal.StringifierOptions>(stringifierEngine: StringifierEngine<any, T>) {
 
     const stringify = (value: any, options?: Partial<T>) => stringifierEngine.stringifyWithOptions(value, options);
     const createExtendedStringifier = <O extends Partial<T>>(

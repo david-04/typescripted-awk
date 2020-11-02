@@ -9,7 +9,7 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
     }
 
     function test(
-        options: Partial<DefaultStringifierOptions> | undefined,
+        options: Partial<internal.StringifierOptions> | undefined,
         value: any,
         displayValueAs: string,
         expectedResult: string
@@ -22,7 +22,7 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
 
     function testObject(
         description: string,
-        options: Partial<DefaultStringifierOptions> | undefined,
+        options: Partial<internal.StringifierOptions> | undefined,
         value: object | any[],
         expectedResult: string
     ) {
