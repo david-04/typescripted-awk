@@ -104,9 +104,8 @@
 
     "misc/unit-test/test-backend.ts",
     "misc/unit-test/test-group.ts",
+    "misc/unit-test/test/test-group.test.ts",
     "misc/unit-test/test-case.ts",
-    "misc/unit-test/filename-to-group.ts",
-    "misc/unit-test/test/filename-to-group.test.ts",
 
     //------------------------------------------------------------------------------------------------------------------
     // Low level functions required for the data-driven test framework

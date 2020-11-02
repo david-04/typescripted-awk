@@ -2,7 +2,7 @@
 // stringifyWithOptions()
 //----------------------------------------------------------------------------------------------------------------------
 
-testGroupForFile("__FILE__", "stringifyWithOptions()", () => {
+testGroupForFile(getCurrentFilename("__FILE__"), "stringifyWithOptions()", () => {
 
     //------------------------------------------------------------------------------------------------------------------
     // Passes data to and from the handler.
@@ -190,7 +190,7 @@ testGroupForFile("__FILE__", "stringifyWithOptions()", () => {
 // stringifyWithContext()
 //----------------------------------------------------------------------------------------------------------------------
 
-testGroupForFile("__FILE__", "stringifyWithContext()", () => {
+testGroupForFile(getCurrentFilename("__FILE__"), "stringifyWithContext()", () => {
 
     //------------------------------------------------------------------------------------------------------------------
     // Starts with the handler specified by the context.

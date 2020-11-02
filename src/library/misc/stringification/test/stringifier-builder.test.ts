@@ -2,7 +2,7 @@
 // Constructor
 //----------------------------------------------------------------------------------------------------------------------
 
-testGroupForFile("__FILE__", "constructor()", () => {
+testGroupForFile(getCurrentFilename("__FILE__"), "constructor", () => {
 
     //------------------------------------------------------------------------------------------------------------------
     // Merges additional options
@@ -25,7 +25,7 @@ testGroupForFile("__FILE__", "constructor()", () => {
 // stringify...()
 //----------------------------------------------------------------------------------------------------------------------
 
-testGroupForFile("__FILE__", () => {
+testGroupForFile(getCurrentFilename("__FILE__"), () => {
 
     //------------------------------------------------------------------------------------------------------------------
     // Setup
@@ -118,7 +118,7 @@ testGroupForFile("__FILE__", () => {
 // stringifyIf()
 //----------------------------------------------------------------------------------------------------------------------
 
-testGroupForFile("__FILE__", "stringifyIf()", () => {
+testGroupForFile(getCurrentFilename("__FILE__"), "stringifyIf()", () => {
 
     testCase("Adds exactly one handler", () => {
 
@@ -162,7 +162,7 @@ testGroupForFile("__FILE__", "stringifyIf()", () => {
 // Option types
 //----------------------------------------------------------------------------------------------------------------------
 
-testGroupForFile("__FILE__", "misc", () => {
+testGroupForFile(getCurrentFilename("__FILE__"), "misc", () => {
 
     testCase("Exposes combined (base and current) options in the context", () => {
 

@@ -2,7 +2,7 @@
 // PreStringifiedValue
 //----------------------------------------------------------------------------------------------------------------------
 
-testGroupForFile("__FILE__", "PreStringifiedValue", () => {
+testGroupForFile(getCurrentFilename("__FILE__"), "PreStringifiedValue", () => {
 
     //------------------------------------------------------------------------------------------------------------------
     // Constructor
@@ -24,7 +24,7 @@ testGroupForFile("__FILE__", "PreStringifiedValue", () => {
 // PreStringifiedValueBuilder
 //----------------------------------------------------------------------------------------------------------------------
 
-testGroupForFile("__FILE__", "PreStringifiedValueBuilder", () => {
+testGroupForFile(getCurrentFilename("__FILE__"), "PreStringifiedValueBuilder", () => {
 
     //------------------------------------------------------------------------------------------------------------------
     // Setup
@@ -78,7 +78,7 @@ testGroupForFile("__FILE__", "PreStringifiedValueBuilder", () => {
 // preStringify()
 //----------------------------------------------------------------------------------------------------------------------
 
-testGroupForFile("__FILE__", "preStringify()", () => {
+testGroupForFile(getCurrentFilename("__FILE__"), "preStringify", () => {
 
     testCase("preStringify(myObject) instanceof PreStringifiedValueBuilder === true", () => {
         const myObject = [1, "a", { b: true }];

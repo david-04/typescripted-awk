@@ -93,7 +93,8 @@ class BuiltInTestBackend extends TestBackend {
             this.groupStack.push(description);
             description = this.groupStack.filter(description => description).join(" => ")
             this.groupStack.pop();
-            console.log(`${this.failed ? "" : "\n"}FAILED: ${description}\n\n${exception}\n`);
+            const separator = "--------------------------------------------------------------------------------";
+            console.log(`${this.failed ? "" : `\n${separator}\n\n`}${description}\n\n${exception}\n\n${separator}\n`);
             this.failed++;
         }
     }

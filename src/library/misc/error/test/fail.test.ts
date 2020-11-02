@@ -1,4 +1,4 @@
-testGroupForFile("__FILE__", "fail", () => {
+testGroupForFile(getCurrentFilename("__FILE__"), () => {
 
     //------------------------------------------------------------------------------------------------------------------
     // Setup
@@ -15,7 +15,6 @@ testGroupForFile("__FILE__", "fail", () => {
     //------------------------------------------------------------------------------------------------------------------
 
     testTemplate((...parameters: internal.ValueOrSupplier<string | Error>[]) => ({
-        group: "fail()",
         description: "fail($*)",
         action: () => fail(...parameters)
     }))

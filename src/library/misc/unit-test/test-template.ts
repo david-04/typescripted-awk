@@ -42,7 +42,7 @@ class TestTemplate<P extends any[], R, T extends TestTemplate<P, R, any>>
     extends internal.TestAssertions<P, R>
     implements internal.TestTemplate<P, T> {
 
-    private _testRun?: { descriptor: internal.TestDescriptor<R>, result?: R, exception?: any };
+    private _testRun?: { description: string, descriptor: internal.TestDescriptor<R>, result?: R, exception?: any };
 
     //------------------------------------------------------------------------------------------------------------------
     // Initialize a new TestTemplate.
@@ -61,11 +61,12 @@ class TestTemplate<P extends any[], R, T extends TestTemplate<P, R, any>>
         const descriptor = this.supplier(
             ...parameters.map(param => param instanceof internal.PreStringifiedValue ? param.value : param) as P
         );
+        const description = stringify.inline.format(descriptor.description, ...parameters);
 
         try {
-            this._testRun = { descriptor, result: descriptor.action() };
+            this._testRun = { description, descriptor, result: descriptor.action() };
         } catch (exception) {
-            this._testRun = { descriptor, exception };
+            this._testRun = { description, descriptor, exception };
         }
 
         return this as this & T;
@@ -89,7 +90,7 @@ class TestTemplate<P extends any[], R, T extends TestTemplate<P, R, any>>
     protected validateResult(description: string, validate: internal.Consumer<R>): this {
 
         testGroup(this.testRun.descriptor.group ?? "", () => {
-            testCase(`${this.testRun.descriptor.description} ${description}`, () => {
+            testCase(`${this.testRun.description} ${description}`, () => {
                 if (this.testRun.exception) {
                     throw this.testRun.exception;
                 } else {
@@ -108,7 +109,7 @@ class TestTemplate<P extends any[], R, T extends TestTemplate<P, R, any>>
     protected validateException(description: string, validate: internal.Function1<any, void>): this {
 
         testGroup(this.testRun.descriptor.group ?? "", () => {
-            testCase(`${this.testRun.descriptor.description} ${description}`, () => {
+            testCase(`${this.testRun.description} ${description}`, () => {
                 if (!this.testRun.exception) {
                     throw new Error("No exception was raised");
                 } else {
