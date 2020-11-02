@@ -63,7 +63,7 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
 
     function testStringifyType(
         methodName: string,
-        getSetter: internal.Function1<StringifierBuilder<any, any>, internal.Consumer<internal.Function1<any, any>>>,
+        getSetter: internal.Supplier<StringifierBuilder<any, any>, internal.Consumer<internal.Supplier<any, any>>>,
         matchFilter: internal.Predicate<any>
     ) {
 

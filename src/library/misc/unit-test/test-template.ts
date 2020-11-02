@@ -106,7 +106,7 @@ class TestTemplate<P extends any[], R, T extends TestTemplate<P, R, any>>
     // Add a test case that performs the given validation on the test action's current exception.
     //------------------------------------------------------------------------------------------------------------------
 
-    protected validateException(description: string, validate: internal.Function1<any, void>): this {
+    protected validateException(description: string, validate: internal.Consumer<any>): this {
 
         testGroup(this.testRun.descriptor.group ?? "", () => {
             testCase(`${this.testRun.description} ${description}`, () => {

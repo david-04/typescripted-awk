@@ -6,7 +6,7 @@ namespace internal {
     // @type    O The options supported by the stringifier this function belongs to.
     //------------------------------------------------------------------------------------------------------------------
 
-    export type StringificationHandler<T, O> = internal.Function2<T, StringifierContext<O>, string>;
+    export type StringificationHandler<T, O> = internal.Supplier<T, StringifierContext<O>, string>;
 
     //------------------------------------------------------------------------------------------------------------------
     // An object that allows adding stringification handlers while constructing a stringifier.
@@ -18,7 +18,7 @@ namespace internal {
         // Append a stringification handler to the end of the chain.
         //--------------------------------------------------------------------------------------------------------------
 
-        protected abstract addStringifier(appliesTo: Predicate1<any>, stringify: StringificationHandler<any, T>): this;
+        protected abstract addStringifier(appliesTo: Predicate<any>, stringify: StringificationHandler<any, T>): this;
 
         //--------------------------------------------------------------------------------------------------------------
         // Add a handler for any value that matches a custom condition.
@@ -26,7 +26,7 @@ namespace internal {
         // @param   stringify A function that stringifies the given value.
         //--------------------------------------------------------------------------------------------------------------
 
-        public stringifyIf(condition: Predicate1<any>, stringify: StringificationHandler<any, T>) {
+        public stringifyIf(condition: Predicate<any>, stringify: StringificationHandler<any, T>) {
             return this.addStringifier(condition, stringify);
         }
 
@@ -118,7 +118,7 @@ class StringifierBuilder<B, T> extends internal.StringifierBuilder<B & T>{
     //------------------------------------------------------------------------------------------------------------------
 
     protected addStringifier(
-        appliesTo: internal.Predicate1<any>,
+        appliesTo: internal.Predicate<any>,
         stringify: internal.StringificationHandler<any, B & T>
     ): this {
         this.handlers.push({ appliesTo, stringify });

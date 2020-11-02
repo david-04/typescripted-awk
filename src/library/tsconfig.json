@@ -96,7 +96,7 @@
 
     "internal/node-modules.ts",
     "internal/source-map-support.ts",
-    "data/generic-function-types.ts",
+    "data/generic-types.ts",
 
     //------------------------------------------------------------------------------------------------------------------
     // Test backend

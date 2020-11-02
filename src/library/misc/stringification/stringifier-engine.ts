@@ -3,8 +3,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 
 interface StringifierHandler<T> {
-    appliesTo: internal.Predicate1<any>;
-    stringify: internal.Function2<any, StringifierContext<T>, string>;
+    appliesTo: internal.Predicate<any>;
+    stringify: internal.Supplier<any, StringifierContext<T>, string>;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

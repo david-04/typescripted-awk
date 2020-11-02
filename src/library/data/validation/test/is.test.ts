@@ -37,8 +37,8 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
 
     function test(
         functionName: string,
-        testRunner: internal.Predicate1<any>,
-        expectedResultSupplier: internal.Predicate1<any>
+        testRunner: internal.Predicate<any>,
+        expectedResultSupplier: internal.Predicate<any>
     ) {
         for (const valueAsString of testData.map(value => value.trim())) {
             const value = eval(valueAsString);
@@ -76,7 +76,7 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
 
         testCase("The type guard binds to the function signature", () => {
 
-            const myFunction = ((p: number) => p) as undefined | null | internal.Function1<number, number>;
+            const myFunction = ((p: number) => p) as undefined | null | internal.Supplier<number, number>;
 
             // @ts-expect-error - it could be undefined or null
             myFunction(1);
@@ -292,7 +292,7 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
 
         testCase("The type guard preserves the function's signature", () => {
 
-            const myFunction = ((p: number) => p) as Exclude<Anything, Function> | internal.Function1<number, number>;
+            const myFunction = ((p: number) => p) as Exclude<Anything, Function> | internal.Supplier<number, number>;
 
             // @ts-expect-error - it could be undefined or null
             myFunction(1);
@@ -316,8 +316,8 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
             type interface2 = { method1: internal.Supplier<boolean>, method2: internal.Supplier<boolean> }
             const myObject: interface1 & interface2 = { method1: () => true, method2: () => true };
 
-            type function1 = internal.Function1<number, interface1>
-            type function2 = internal.Function2<number, string, interface2>
+            type function1 = internal.Supplier<number, interface1>
+            type function2 = internal.Supplier<number, string, interface2>
             const myFunction = (() => myObject) as Exclude<Anything, Function> | function1 | function2;
 
             // @ts-expect-error - it could be anything

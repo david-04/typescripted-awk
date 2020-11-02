@@ -6,12 +6,12 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
 
     class TestStringifier implements ContextualStringifier<any> {
 
-        private validator?: internal.Function2<any, TestStringifierContext, string>;
+        private validator?: internal.Supplier<any, TestStringifierContext, string>;
         public wasInvoked = false;
 
         constructor(public readonly name: string, public readonly baseStringifier?: ContextualStringifier<any>) { }
 
-        public onStringifyWithContext(validator: internal.Function2<any, TestStringifierContext, string>) {
+        public onStringifyWithContext(validator: internal.Supplier<any, TestStringifierContext, string>) {
             this.validator = validator;
         }
 
@@ -62,9 +62,9 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
     }
 
     function testStringificationCallback(
-        stringificationAction: internal.Function2<TestStringifierContext, any, string>,
-        targetStringifierSelector: internal.Function1<ContextState, ContextualStringifier<any>>,
-        getExpectedCallbackState: internal.Function1<ContextState, ContextState>
+        stringificationAction: internal.Supplier<TestStringifierContext, any, string>,
+        targetStringifierSelector: internal.Supplier<ContextState, ContextualStringifier<any>>,
+        getExpectedCallbackState: internal.Supplier<ContextState, ContextState>
     ) {
 
         const baseStringifier = new TestStringifier("baseStringifier");
