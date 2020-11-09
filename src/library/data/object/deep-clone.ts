@@ -1,11 +1,13 @@
 //----------------------------------------------------------------------------------------------------------------------
-// Create a deep clone of the given value. Only objects (like arrays, instances of classes, and anonymous object
-// literals) are cloned. For all other values (like numbers and functions), shallow copying is used. Circular references
-// (recursive nesting of an object inside itself) are supported and preserved.
+// Create a deep copy of an object by recursively cloning each property. The object may contain circular references
+// (objects nested inside themselves). These references are preserved and replicated in the clone. Class instances can
+// be copied as well, but there might be a few limitations (for example, the stack trace of `Error` objects is not
+// carried over).
 //
-// @brief   Create a deep copy of the given object.
+// @brief   Create a deep copy of an object.
 // @param   value The object to clone.
 // @return  Returns a deep copy of the object.
+// @type    T The type of the object to clone.
 // @level   3
 //----------------------------------------------------------------------------------------------------------------------
 

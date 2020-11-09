@@ -96,6 +96,7 @@
 
     "internal/node-modules.ts",
     "internal/source-map-support.ts",
+    "internal/internal-namespace.ts",
     "data/generic-types.ts",
 
     //------------------------------------------------------------------------------------------------------------------
@@ -148,6 +149,8 @@
     "misc/error/fail.ts",
     "misc/error/test/fail.test.ts",
 
-    "internal/inject-export.ts"
+    "internal/inject-export.ts",
+
+    "playground.ts"
   ]
 }

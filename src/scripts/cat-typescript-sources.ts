@@ -2,6 +2,7 @@ import * as fs from "fs";
 
 getFilesFromTsconfigJson(`${process.argv[2]}/${process.argv[3]}`)
     .filter(file => ("test" === process.argv[4]) === !!file.match(/(\/test\/|\.test\.|source-map-support)/))
+    .filter(file => "playground.ts" !== file)
     .map(file => processSourceFile(process.argv[2], file));
 
 //----------------------------------------------------------------------------------------------------------------------

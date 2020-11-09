@@ -1,10 +1,27 @@
-//----------------------------------------------------------------------------------------------------------------------
-// A handler that can be added to the StringifierEngine.
-//----------------------------------------------------------------------------------------------------------------------
+namespace internal {
 
-interface StringifierHandler<T> {
-    appliesTo: internal.Predicate<any>;
-    stringify: internal.Supplier<any, StringifierContext<T>, string>;
+    //------------------------------------------------------------------------------------------------------------------
+    // A function that stringifies a value. It's added via `stringify.createExtendedStringifier()` and can return either
+    // a string or `undefined`:
+    //
+    // ```typescript
+    // const myStringify = stringify.createExtendedStringifier(builder =>
+    //     builder.stringifyNumber(number => 0 < number ? `+${number}` : undefined)
+    // );
+    // ```
+    //
+    // If a string is returned, it's used as the stringified representation of the value. If `undefined` is returned,
+    // the value will be passed on to the next stringification handler in the chain.
+    //
+    // A `StringifierContext` is passed as the second parameter. It can be used to retrieve the options and the current
+    // indent, and to delegate the value to other rendering handlers of the stringifier.
+    //
+    // @brief   A function that stringifies a value.
+    // @type    T The type of value handled by the function (might be "any").
+    // @type    O The options supported by the stringifier this rendering rule belongs to.
+    //------------------------------------------------------------------------------------------------------------------
+
+    export type StringificationHandler<T, O> = (value: T, context: StringifierContext<O>) => string | undefined;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -18,7 +35,7 @@ class StringifierEngine<B, T extends B> implements ContextualStringifier<T> {
     //------------------------------------------------------------------------------------------------------------------
 
     constructor(
-        private readonly handlers: StringifierHandler<T>[],
+        private readonly handlers: internal.StringificationHandler<any, T>[],
         public readonly defaultOptions: T,
         public readonly baseStringifier?: StringifierEngine<any, B>
     ) { }
@@ -109,21 +126,23 @@ class StringifierEngine<B, T extends B> implements ContextualStringifier<T> {
     public stringifyWithContext(value: any, context: StringifierContext<T>) {
 
         if (value instanceof internal.PreStringifiedValue) {
-            return value.stringifiedValue;
+            return value.stringifiedValue.replace(/\r?\n/g, `\n${context.indent}`);
         }
 
         for (; context.currentHandlerIndex < this.handlers.length; context.currentHandlerIndex++) {
             const handler = this.handlers[context.currentHandlerIndex];
-            if (handler.appliesTo(value)) {
-                for (const item of context.stack) {
-                    if (item.value === value && item.stringifierEngine === this && item.handler === handler) {
-                        throw new Error("The stringification handlers created an infinite recursion");
-                    }
-                };
-                context.stack.push({ value, stringifierEngine: this, handler });
-                const result = handler.stringify(value, context);
-                context.stack.pop();
+            for (const item of context.stack) {
+                if (item.value === value && item.stringifierEngine === this && item.handler === handler) {
+                    throw new Error("The stringification handlers created an infinite recursion");
+                }
+            };
+            context.stack.push({ value, stringifierEngine: this, handler });
+            const result = handler(value, context);
+            context.stack.pop();
+            if ("string" === typeof result) {
                 return result;
+            } else if (undefined !== result) {
+                throw new Error(`The stringification handler returned neither a string nor undefined:\n\n${result}`);
             }
         }
 

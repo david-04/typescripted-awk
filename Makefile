@@ -95,6 +95,8 @@ build/typedoc/level-%/index.html : build/library/tsawk.ts build/scripts/process-
 	typedoc --excludeNotExported \
 			--includeDeclarations \
 			--excludeExternals \
+			--excludeProtected \
+			--excludePrivate \
 			--theme default \
 			--name "typscripted-awk | $(VERSION)-level-$*" \
 			--disableSources \

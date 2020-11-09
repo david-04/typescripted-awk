@@ -24,7 +24,7 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
     testCase("stringifier(value) returns the stringified representation", () => {
 
         const expectedResult = "stringified-number";
-        const handler = { appliesTo: isNumber, stringify: () => expectedResult };
+        const handler = (value: any) => isNumber(value) ? expectedResult : undefined;
         const stringifierEngine = new StringifierEngine([handler], options());
 
         const stringify = createStringifier(stringifierEngine);
@@ -39,7 +39,7 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
     testCase("stringifier(value, options) applies the provided options", () => {
 
         const stringify = createStringifier(new StringifierEngine(
-            [{ appliesTo: isNumber, stringify: (_value, context) => context.options.indent }], options()
+            [(value, context) => isNumber(value) ? context.options.indent : undefined], options()
         ));
 
         assert.strictEqual(stringify(1, { indent: "..." }), "...");
@@ -53,7 +53,7 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
     testCase("stringifier.createExtendedStringifier(options) registers the options", () => {
 
         const stringifier = createStringifier(new StringifierEngine(
-            [{ appliesTo: isNumber, stringify: (_value, context) => context.options.indent }],
+            [(value, context) => isNumber(value) ? context.options.indent : undefined],
             options({ indent: "indent.base" })
         ));
 
@@ -67,16 +67,16 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
     testCase("stringifier.createExtendedStringifier(callback) registers the handlers", () => {
 
         const expectedNumberResult = "stringified-number";
-        const baseHandler = { appliesTo: isNumber, stringify: () => expectedNumberResult };
+        const baseHandler = (value: any) => isNumber(value) ? expectedNumberResult : undefined;
         const baseStringifier = new StringifierEngine([baseHandler], options());
 
         const stringifyBase = createStringifier(baseStringifier);
 
         const expectedStringResult = "stringified-string";
-        const extendedHandler = { appliesTo: isString, stringify: () => expectedStringResult };
+        const extendedHandler = (value: any) => isString(value) ? expectedStringResult : undefined;
 
         const stringifyExtended = stringifyBase.createExtendedStringifier(builder =>
-            builder.stringifyIf(extendedHandler.appliesTo, extendedHandler.stringify)
+            builder.stringifyAny(extendedHandler)
         );
 
         assert.strictEqual(stringifyExtended(123), expectedNumberResult);
@@ -90,16 +90,16 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
     testCase("stringifier.createExtendedStringifier(options, builder) registers the options and handlers", () => {
 
         const expectedNumberResult = "stringified-number";
-        const baseHandler = { appliesTo: isNumber, stringify: () => expectedNumberResult };
+        const baseHandler = (value: any) => isNumber(value) ? expectedNumberResult : undefined;
         const baseStringifier = new StringifierEngine([baseHandler], options({ a: 1, b: 2 }));
 
         const stringifyBase = createStringifier(baseStringifier);
 
         const expectedStringResult = "stringified-string";
-        const extendedHandler = { appliesTo: isString, stringify: () => expectedStringResult };
+        const extendedHandler = (value: any) => isString(value) ? expectedStringResult : undefined;
 
         const stringifyExtended = stringifyBase.createExtendedStringifier({ b: 3, c: 4 }, builder =>
-            builder.stringifyIf(extendedHandler.appliesTo, extendedHandler.stringify)
+            builder.stringifyAny(extendedHandler)
         );
 
         assert.strictEqual(stringifyExtended(123), expectedNumberResult);
@@ -114,9 +114,10 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
     testCase("stringifier.inline() uses breakLines = true", () => {
 
         const baseStringifier = new StringifierEngine(
-            [{ appliesTo: isNumber, stringify: (_value, context) => `${context.options.breakLines}` }],
+            [(value, context) => isNumber(value) ? `${context.options.breakLines}` : undefined],
             options({ breakLines: "auto" })
         );
+
         const stringify = createStringifier(baseStringifier);
 
         assert.strictEqual(stringify(1), "auto");

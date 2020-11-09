@@ -1,16 +1,15 @@
-//----------------------------------------------------------------------------------------------------------------------
-// Function aliases
-//----------------------------------------------------------------------------------------------------------------------
-
 namespace internal {
 
     //------------------------------------------------------------------------------------------------------------------
-    // A function that returns a value. The last type parameter represents the return type. Other types preceding it
-    // represent the function's arguments:
+    // A function with or without parameters that returns a value. The last type parameter represents the return type.
+    // Other types preceding it represent the function's parameters:
     //
-    // ```ts
+    // ```typescript
     // let supplier0: Supplier<boolean> = () => true;
-    // let supplier2: Supplier<string, number, boolean> = (s, n) => s.length < n;
+    //
+    // let supplier2: Supplier<string[], number, boolean> = (array, maxLength) => {
+    //     return array.length <= maxLength;
+    // };
     // ```
     //
     // @brief   A function that returns a value.
@@ -61,11 +60,13 @@ namespace internal {
         ];
 
     //------------------------------------------------------------------------------------------------------------------
-    // A function with a rest parameter that returns a value. The last type parameter represents the return value.
-    // Other types preceding it represent the function's arguments, with the last one acting as the rest parameter:
+    // A function with (at least) a rest parameter that returns a value. The last type parameter represents the return
+    // value. Other types preceding it represent the function's parameters, with the last one being the rest parameter:
     //
-    // ```ts
-    // let supplier: SupplierR<number, object, boolean> = (n, ...o) => o.length < n;
+    // ```typescript
+    // let supplier: SupplierR<number, object, boolean> = (maxLength, ...objects) => {
+    //     return objects.length <= maxLength;
+    // };
     // ```
     //
     // @brief   A function with a rest parameter that returns a value.
@@ -116,10 +117,13 @@ namespace internal {
         ];
 
     //------------------------------------------------------------------------------------------------------------------
-    // A function without return value. Type parameters (if present) represent the function's arguments:
+    // A function with one or more parameters and without return value. The type parameters represent the types of the
+    // function's parameters:
     //
-    // ```ts
-    // let consumer: Consumer<string, number> = (s, n) => { console.log(n < s.length) };
+    // ```typescript
+    // let consumer: Consumer<string, number> = (text, maxLength) => {
+    //     console.log(text.length <= maxLength ? "short" : "long");
+    // };
     // ```
     //
     // @brief   A function without return value.
@@ -166,11 +170,13 @@ namespace internal {
         ];
 
     //------------------------------------------------------------------------------------------------------------------
-    // A function with a rest parameter and without return value. Type parameters represent the function's arguments,
-    // with the last one acting as the rest parameter:
+    // A function with (at least) a rest parameter and without return value. The type parameters represent the types of
+    // the function's parameters, with the last one being the rest parameter:
     //
-    // ```ts
-    // let consumer: ConsumerR<string, number> = (s, ...n) => { console.log(s + n.join(",")) };
+    // ```typescript
+    // let consumer: ConsumerR<string, number> = (separator, ...numbers) => {
+    //     console.log(numbers.join(separator));
+    // };
     // ```
     //
     // @brief   A function with a rest parameter and without return value.
@@ -217,11 +223,15 @@ namespace internal {
         ];
 
     //------------------------------------------------------------------------------------------------------------------
-    // A function that returns a boolean value. If supplied, the type parameters represent the function's arguments:
+    // A function with or without parameters that returns a boolean value. If present, the type parameters represent
+    // the types of the function's parameters:
     //
-    // ```ts
+    // ```typescript
     // let predicate0: Predicate = () => true;
-    // let predicate2: Predicate<string, number> = (s, n) => s.length < n;
+    //
+    // let predicate2: Predicate<string, number> = (text, maxLength) => {
+    //     return text.length <= maxLength;
+    // };
     // ```
     //
     // @brief    A function that returns a boolean value.
@@ -273,11 +283,13 @@ namespace internal {
 
 
     //------------------------------------------------------------------------------------------------------------------
-    // A function with a rest paramter that returns a boolean value. The type parameters represent the function's
-    // arguments, with the last one acting as the rest parameter:
+    // A function with (at least) a rest paramter that returns a boolean value. The type parameters represent the
+    // types of the function's parameters, with the last one being the rest parameter:
     //
-    // ```ts
-    // let predicate: PredicateR<number, string> = (n, ...s) => n < s.join("").length;
+    // ```typescript
+    // let predicate: PredicateR<number, string> = (maxLength, ...words) => {
+    //     return 0 < words.filter(word => maxLength < word.length).length;
+    // };
     // ```
     //
     // @brief    A function that returns a boolean value.
@@ -329,9 +341,11 @@ namespace internal {
     //------------------------------------------------------------------------------------------------------------------
     // A function without parameters and without return value:
     //
-    // ```ts
-    // let action: Action = () => { console.log("test"); }
-    // ``
+    // ```typescript
+    // let action: Action = () => {
+    //     console.log("action");
+    // };
+    // ```
     //
     // @brief   A function without parameters and without return value.
     //------------------------------------------------------------------------------------------------------------------
@@ -339,23 +353,46 @@ namespace internal {
     export type Action = () => void;
 
     //------------------------------------------------------------------------------------------------------------------
-    // Any type of function.
+    // Any type of function that might (or might not) have parameters and/or a return value:
+    //
+    // ```typescript
+    // let functions: AnyFunction[] = [
+    //     () => { console.log("hello world"); },
+    //     (text: string, maxLength: number) => text.length <= maxLength,
+    //     (...words: string[]) => words.join(" ")
+    // ];
+    // ```
+    //
+    // @brief   Any type of function.
     //------------------------------------------------------------------------------------------------------------------
 
     export type AnyFunction = ((...parameters: any) => any) | Function;
 
     //------------------------------------------------------------------------------------------------------------------
-    // A value or an array of values.
+    // A value or an array of values:
+    //
+    // ```typescript
+    // function anonymize(text: string, filter: ValueOrArray<string | RegExp>) {
+    //     if (Array.isArray(filter)) {
+    //         filter.forEach(search => text = text.replace(search, "***"));
+    //     } else {
+    //         text = text.replace(filter, "***");
+    //     }
+    //     return text;
+    // }
+    // ```
+    //
+    // @brief   A single value or an array thereof.
     // @type    T The type of the value.
     //------------------------------------------------------------------------------------------------------------------
 
     export type ValueOrArray<T> = T | T[];
 
     //------------------------------------------------------------------------------------------------------------------
-    // A value or a function that returns it. The last type parameter represents the value (and return value) type.
-    // Preceding parameters (if present) represent the function's arguments:
+    // A value or a function that returns it. The last type parameter represents the type of the value and the return
+    // type of the function. Preceding parameters (if present) represent the types of the function's parameters:
     //
-    // ```ts
+    // ```typescript
     // function fail(code: number, messageOrSupplier: ValueOrSupplier<number, string>) {
     //     if ("string" === typeof messageOrSupplier) {
     //         throw new Error(messageOrSupplier);
@@ -363,11 +400,9 @@ namespace internal {
     //         throw new Error(messageOrSupplier(code))
     //     }
     // }
-    //
-    // fail(1, code => code < 10 ? "warning" : "error");
     // ```
     //
-    // @brief   A value or a function that returns it.
+    // @brief   A value or a function that returns a value.
     //------------------------------------------------------------------------------------------------------------------
 
     export type ValueOrSupplier<

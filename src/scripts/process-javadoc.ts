@@ -8,6 +8,12 @@ type CodeSection = { content: string, isComment: boolean };
 type Comment = { description: string, annotations: Array<{ tag: string, content: string }> };
 
 //----------------------------------------------------------------------------------------------------------------------
+// Store the previous comment in case it needs to be repeated)
+//----------------------------------------------------------------------------------------------------------------------
+
+let previousComment: { comment: string, mustExport: boolean } | undefined = undefined;
+
+//----------------------------------------------------------------------------------------------------------------------
 // Command line parameters
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -107,7 +113,7 @@ function removeEmptyLinesAfterComments(sections: CodeSection[]) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Remove comments that are not followed by another comment (witout any code in between).
+// Remove comments that are not followed by another comment (without any code in between).
 //----------------------------------------------------------------------------------------------------------------------
 
 function removeCommentsWithoutCode(sections: CodeSection[]) {
@@ -131,8 +137,21 @@ function transformComment(content: string) {
     content = content.substr(indent.length);
     content = removeCommentDelimiters(content);
     const comment = splitCommentIntoDescriptionAndTags(content);
+
+    if (comment.annotations.filter(annotation => "@repeat" === annotation.tag).length) {
+        if (previousComment) {
+            return previousComment;
+        } else {
+            throw new Error("Found @repeat without preceding comment");
+        }
+    }
+
     const mustExport = processTags(comment);
-    return { comment: renderComment(comment, indent), mustExport };
+    const result = { comment: renderComment(comment, indent), mustExport };
+    if (!content.match(/^\s*@ts-/)) {
+        previousComment = result;
+    }
+    return result;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -260,7 +279,7 @@ function processTypeTag(comment: Comment) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Remove the @level tag and decide if the item needs to be exporyed
+// Remove the @level tag and decide if the item needs to be exported.
 //----------------------------------------------------------------------------------------------------------------------
 
 function processLevelTag(comment: Comment) {

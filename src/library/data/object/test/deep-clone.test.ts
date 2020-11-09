@@ -1,18 +1,6 @@
 testGroupForFile(getCurrentFilename("__FILE__"), () => {
 
     //------------------------------------------------------------------------------------------------------------------
-    // Setup
-    //------------------------------------------------------------------------------------------------------------------
-
-    class MyNestedClass {
-        public constructor(public value: { a: number }) { }
-    }
-
-    class MyClass {
-        public constructor(public nested: MyNestedClass) { }
-    }
-
-    //------------------------------------------------------------------------------------------------------------------
     // Objects
     //------------------------------------------------------------------------------------------------------------------
 
@@ -58,6 +46,14 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
 
     testCase("Clones classes recursively", () => {
 
+        class MyNestedClass {
+            public constructor(public value: { a: number }) { }
+        }
+
+        class MyClass {
+            public constructor(public nested: MyNestedClass) { }
+        }
+
         const input = new MyClass(new MyNestedClass({ a: 1 }));
         const expectedOutput = new MyClass(new MyNestedClass({ a: 1 }));
 
@@ -69,6 +65,46 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
         assert.deepStrictEqual(actualOutput, expectedOutput);
         assert.ok(actualOutput instanceof MyClass, "The clone is not an instance of MyClass");
         assert.ok(actualOutput.nested instanceof MyNestedClass, "The clone does not contain an instance of MyNestedClass");
+    });
+
+    testCase("Clones classes with getters and setters", () => {
+
+        class MyClass {
+            constructor(private _value: number = 0) { }
+            public get value() { return this._value }
+            public set value(value: number) { this._value = value }
+        }
+
+        const input = new MyClass(2);
+
+        const actualOutput = deepClone(input);
+
+        input.value = input.value * 10;
+        actualOutput.value = actualOutput.value * 100;
+
+        assert.deepStrictEqual(input, new MyClass(2 * 10));
+        assert.deepStrictEqual(actualOutput, new MyClass(2 * 100));
+    });
+
+    testCase("Clones classes with inherited properties", () => {
+
+        class MyBaseClass {
+            public constructor(public value: number) { }
+        }
+
+        class MyClass extends MyBaseClass {
+            constructor(value: number) { super(value); }
+        }
+
+        const input = new MyClass(2);
+
+        const actualOutput = deepClone(input);
+
+        input.value *= 10;
+        actualOutput.value *= 100;
+
+        assert.deepStrictEqual(input, new MyClass(2 * 10));
+        assert.deepStrictEqual(actualOutput, new MyClass(2 * 100));
     });
 
     //------------------------------------------------------------------------------------------------------------------

@@ -127,4 +127,24 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
 
         assert.deepStrictEqual(actualOutput, expectedOutput);
     });
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Type checks
+    //------------------------------------------------------------------------------------------------------------------
+
+    testCase("Reflects null and undefined in the return type", () => {
+
+        type MyType = { a: number };
+        const base: MyType = { a: 1 };
+        const overlay: MyType = { a: 1 };
+
+        deepMerge(base, overlay as MyType).a = 1;
+
+        // @ts-expect-error - might be undefined
+        deepMerge(base, overlay as MyType | undefined).a = 1;
+        // @ts-expect-error - might be undefined or null
+        deepMerge(base, overlay as MyType | undefined | null).a = 1;
+        // @ts-expect-error - might be null
+        deepMerge(base, overlay as MyType | null).a = 1;
+    });
 });

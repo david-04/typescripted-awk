@@ -75,6 +75,7 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
                 getSetter(builder).bind(builder)(() => expectedOutput);
                 return builder.handlers[0];
             }
+            const context = new StringifierContext({}, { stringifyWithContext: () => "" });
 
             testCase("Adds exactly one handler", () => {
 
@@ -90,14 +91,10 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
                 const description = shouldApply ? "accepts" : "does not accept";
 
                 testCase(`Adds a handler that ${description} ${valueAsString}`, () => {
-                    assert.strictEqual(createBuilderAndGetHandler().appliesTo(value), shouldApply);
+                    const handler = createBuilderAndGetHandler();
+                    assert.strictEqual(handler(value, context), shouldApply ? expectedOutput : undefined);
                 });
             }
-
-            testCase("Adds the specified stringification function", () => {
-                const context = new StringifierContext({}, { stringifyWithContext: () => "" });
-                assert.strictEqual(createBuilderAndGetHandler().stringify("input", context), expectedOutput);
-            });
         });
     }
 
@@ -109,7 +106,7 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
     testStringifyType("stringifyNumber", builder => builder.stringifyNumber, value => "number" === typeof value);
     testStringifyType("stringifyString", builder => builder.stringifyString, value => "string" === typeof value);
     testStringifyType("stringifyRegExp", builder => builder.stringifyRegExp, value => value instanceof RegExp);
-    testStringifyType("stringifyObject", builder => builder.stringifyObject, value => isObject(value));
+    testStringifyType("stringifyObject", builder => builder.stringifyObject, value => isObject(value) && !isArray(value));
     testStringifyType("stringifyFunction", builder => builder.stringifyFunction, value => "function" === typeof value);
     testStringifyType("stringifyArray", builder => builder.stringifyArray, value => Array.isArray(value));
 });
@@ -123,37 +120,28 @@ testGroupForFile(getCurrentFilename("__FILE__"), "stringifyIf()", () => {
     testCase("Adds exactly one handler", () => {
 
         const builder = new StringifierBuilder(new StringifierEngine([], {}), {});
-        builder.stringifyIf(() => true, () => "");
+        builder.stringifyAny(() => "");
         assert.strictEqual(builder.handlers.length, 1);
-    });
-
-    testCase("Adds the specified 'appliesTo' function", () => {
-
-        const expectedAppliesTo = (value: any) => "number" === typeof value || "string" === typeof value;
-        const builder = new StringifierBuilder(new StringifierEngine([], {}), {});
-        builder.stringifyIf(expectedAppliesTo, () => "");
-        assert.strictEqual(builder.handlers.length, 1);
-        assert.strictEqual(builder.handlers[0].appliesTo, expectedAppliesTo);
     });
 
     testCase("Adds the specified stringification function", () => {
 
         const expectedStringify = (value: any) => `<${value}>`;
         const builder = new StringifierBuilder(new StringifierEngine([], {}), {});
-        builder.stringifyIf(() => true, expectedStringify);
+        builder.stringifyAny(expectedStringify);
         assert.strictEqual(builder.handlers.length, 1);
-        assert.strictEqual(builder.handlers[0].stringify, expectedStringify);
+        assert.strictEqual(builder.handlers[0], expectedStringify);
     });
 
     testCase("Adds multiple handlers", () => {
 
         const expectedHandlers = [
-            { appliesTo: (value: any) => "number" === typeof value, stringify: (value: any) => `<${value}>` },
-            { appliesTo: (value: any) => "function" === typeof value, stringify: (value: any) => `${value}()` }
+            (value: any) => "number" === typeof value ? `<${value}>` : undefined,
+            (value: any) => "function" === typeof value ? `${value}()` : undefined
         ];
 
         const builder = new StringifierBuilder(new StringifierEngine([], {}), {});
-        expectedHandlers.forEach(handler => builder.stringifyIf(handler.appliesTo, handler.stringify));
+        expectedHandlers.forEach(handler => builder.stringifyAny(handler));
         assert.deepStrictEqual(builder.handlers, expectedHandlers);
     });
 });
@@ -167,7 +155,7 @@ testGroupForFile(getCurrentFilename("__FILE__"), "misc", () => {
     testCase("Exposes combined (base and current) options in the context", () => {
 
         new StringifierBuilder(new StringifierEngine([], { a: 1, b: 2 }), { b: 3, c: 4 })
-            .stringifyIf(() => true, (_value, context) => {
+            .stringifyAny((_value, context) => {
                 // @ts-expect-error
                 context.options.d;
                 return `${context.options.a} ${context.options.b} ${context.options.c}`;

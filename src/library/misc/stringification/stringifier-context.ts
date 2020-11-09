@@ -1,8 +1,9 @@
 namespace internal {
 
     //------------------------------------------------------------------------------------------------------------------
-    // Contextual information passed to a stringify handler method. It gives access to options and allows to redirect
-    // the stringification task to another stringifier in the chain.
+    // Contextual information passed to a stringifier's rendering handler. It gives access to options and allows to
+    // redirect stringification tasks to other stringifiers or handlers in the chain.
+    //
     // @brief   Contextual information passed to a stringify handler method.
     // @type    T The top-level stringifier's options
     //------------------------------------------------------------------------------------------------------------------
@@ -10,19 +11,22 @@ namespace internal {
     export interface StringifierContext<T> {
 
         //--------------------------------------------------------------------------------------------------------------
-        // The top-level stringifier's current options.
+        // The current options of the top-level stringifier.
         //--------------------------------------------------------------------------------------------------------------
 
         readonly options: T;
 
         //--------------------------------------------------------------------------------------------------------------
-        // The current indent (might be an empty string) to be prepended to each new line rendered.
+        // The current indent (might be an empty string) to be prepended to each new line being rendered.
+        //
+        // @brief   The current line indent.
         //--------------------------------------------------------------------------------------------------------------
 
         readonly indent: string;
 
         //--------------------------------------------------------------------------------------------------------------
         // Stringify the given value with the top-level stringifier.
+        //
         // @param   value The value to stringify.
         // @param   additionalIndent Extra spacing to be added on top of the already applicable indent.
         // @return  Returns the stringified value.
@@ -32,6 +36,7 @@ namespace internal {
 
         //--------------------------------------------------------------------------------------------------------------
         // Stringify the given value with the next handler of the current stringifier.
+        //
         // @param   value The value to stringify.
         // @param   additionalIndent Extra spacing to be added on top of the already applicable indent.
         // @return  Returns the stringified value.
@@ -41,6 +46,7 @@ namespace internal {
 
         //--------------------------------------------------------------------------------------------------------------
         // Stringify the given value with the current stringifier, re-starting from the first handler in the chain.
+        //
         // @brief   Stringify the given value with the current stringifier.
         // @param   value The value to stringify.
         // @param   additionalIndent Extra spacing to be added on top of the already applicable indent.
@@ -51,6 +57,7 @@ namespace internal {
 
         //--------------------------------------------------------------------------------------------------------------
         // Stringify the given value with the base stringifier (i.e. the one extended by the current stringifier).
+        //
         // @param   Stringify the given value with the base stringifier.
         // @param   value The value to stringify.
         // @param   additionalIndent Extra spacing to be added on top of the already applicable indent.

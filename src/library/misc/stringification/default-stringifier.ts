@@ -150,7 +150,11 @@ function stringifyArray(values: any[], context: internal.StringifierContext<inte
     let { breakLines } = context.options;
     if ("auto" === breakLines) {
         breakLines = !!values.filter(item =>
-            isObject(item) || isArray(item) || (isString(item) && rendersWithLineBreaks(item, context))
+            (
+                isObject(item)
+                && (!(item instanceof internal.PreStringifiedValue) || 0 < item.stringifiedValue.indexOf("\n"))
+            )
+            || isArray(item) || (isString(item) && rendersWithLineBreaks(item, context))
         ).length;
     }
 
@@ -178,7 +182,12 @@ function stringifyObject(value: any, context: internal.StringifierContext<intern
     let { breakLines } = context.options;
     if ("auto" === breakLines) {
         breakLines = !!properties.map(property => property.value).filter(item =>
-            isObject(item) || isArray(item) || (isString(item) && rendersWithLineBreaks(item, context))
+            (
+                isObject(item)
+                && (!(item instanceof internal.PreStringifiedValue) || 0 < item.stringifiedValue.indexOf("\n"))
+            )
+            || isArray(item)
+            || (isString(item) && rendersWithLineBreaks(item, context))
         ).length;
     }
 
@@ -219,7 +228,103 @@ function stringifyObject(value: any, context: internal.StringifierContext<intern
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Stringify a value or create an extended stringifier.
+// Convert an object into a string representation similar to JSON. In contrast to `JSON.stringify()`, the result is
+// meant to be more readable, but at the same time can't be parsed back into an object:
+//
+// ```typescript
+// stringify({ a: new MyClass(123), b: [`it's`, `a "quote"`] });
+//
+// // returns:
+// {
+//     a: MyClass(value: 123),
+//     b: ["it's", 'a "quote"']
+// }
+// ```
+//
+// The stringification tries to keep the result compact and readable by:
+//
+// - including class names where applicable
+// - avoiding line breaks between properties where feasible
+// - omitting quotes around property names
+// - dynamically using backticks, single or double quotes for strings
+//
+// Special handling applies to instances of the `PreStringifiedValue`. Instead of using the default rendering logic,
+// the stringifier just inserts the pre-rendered representation:
+//
+// ```typescript
+// const myObject = {
+//     a: preStringify(123).as("one-two-three"),
+//     b: preStringify([1, 2, 3]).as("an array")
+// };
+//
+// myObject.a.value === 123;
+// myObject.a.stringifiedValue === "one-two-three";
+// stringify(myObject) === "{ a: one-two-three, b: an array }";
+// ```
+//
+// The stringification result can be customized by passing options as the second parameter:
+//
+// ```typescript
+// stringify(myObject, {
+//     breakLines: false,
+//     quotes: "'",
+//     indent: "  ",
+//     quotePropertyNames: true
+// });
+// ```
+//
+// The stringifier's `format()` method can be used to render a set of objects as specified in a format string:
+//
+// ```typescript
+// const stringified = stringify.format(
+//     "$1.filter($2) contains: $*",
+//      [1, 2, 3],
+//     (x: number) => x < 3,
+//     1,
+//     2
+// );
+//
+// stringified === "[1, 2, 3].filter((x) => x < 3) contains 1, 2";
+// ```
+//
+// There's also a shortcut to quickly stringify a value in a single line (i.e. without line breaks):
+//
+// ```typescript
+// stringify.inline(myObject);
+// // this is equivalent to:
+// stringify(myObject, { breakLines: false });
+// ```
+//
+// A pre-configured stringifier can be saved and reused by creating an extended stringifier:
+//
+// ```typescript
+// const myStringify = stringify.createExtendedStringifier({
+//     indent: "\t",
+//     quotePropertyNames: true
+// });
+//
+// myStringify(myObject);
+// // this produces the same result as:
+// stringify(myObject, {
+//     indent: "\t",
+//     quotePropertyNames: true
+// });
+// ```
+//
+// Extended stringifiers can also implement custom rendering rules:
+//
+// ```typescript
+// const myStringify = stringify.createExtendedStringifier(builder =>
+//     builder.stringifyNumber(number => 0 < number ? `+${number}` : `${number}`)
+// );
+//
+// myStringify(myObject);
+// ```
+//
+// The stringifier's result is meant to be human readable and not machine readable - and the format might change in the
+// future.
+//
+// @brief   Convert an object into a string representation similar to JSON.
 // @level   3
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -234,13 +339,13 @@ const stringify = (() => {
 
     return createStringifier(new StringifierEngine([], options)).createExtendedStringifier(builder => builder
 
-        .stringifyIf(value => undefined === value, () => "undefined")
-        .stringifyIf(value => null === value, () => "null")
+        .stringifyAny(value => undefined === value ? "undefined" : undefined)
+        .stringifyAny(value => null === value ? "null" : undefined)
         .stringifyBoolean(value => value ? "true" : "false")
         .stringifyNumber(stringifyNumber)
         .stringifyString((value, context) => stringifyString(value, context))
         .stringifyRegExp((value, context) => stringifyRegularExpression(value, context.options))
-        .stringifyIf(value => value instanceof Error, (value, context) => stringifyException(value, context))
+        .stringifyAny((value, context) => value instanceof Error ? stringifyException(value, context) : undefined)
         .stringifyFunction((value, context) => stringifyFunction(value, context.options.breakLines))
         .stringifyArray((value, context) => stringifyArray(value, context))
         .stringifyObject((value, context) => stringifyObject(value, context))

@@ -1,53 +1,50 @@
-namespace internal {
+//----------------------------------------------------------------------------------------------------------------------
+// Implementation of all test assertions.
+//----------------------------------------------------------------------------------------------------------------------
+
+abstract class TestAssertions<P extends any[], R> implements
+    internal.TestAssertionsVoid<P>,
+    internal.TestAssertionsAny<P, R> {
 
     //------------------------------------------------------------------------------------------------------------------
-    // Implementation of all test assertions.
+    // Start a new test run with a different set of test data.
     //------------------------------------------------------------------------------------------------------------------
 
-    export abstract class TestAssertions<P extends any[], R> implements
-        internal.TestAssertionsVoid<P>,
-        internal.TestAssertionsAny<P, R> {
+    public abstract with(...parameters: { [i in keyof P]: P[i] | internal.PreStringifiedValue<P[i]>; }): this;
 
-        //--------------------------------------------------------------------------------------------------------------
-        // Start a new test run with a different set of test data.
-        //--------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    // Run the given validation on the return value.
+    //------------------------------------------------------------------------------------------------------------------
 
-        public abstract with(...parameters: { [i in keyof P]: P[i] | PreStringifiedValue<P[i]>; }): this;
+    protected abstract validateResult(description: string, validate: internal.Consumer<R>): this;
 
-        //--------------------------------------------------------------------------------------------------------------
-        // Run the given validation on the return value.
-        //--------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    // Run the given validation on the exception thrown (and fail if no exception was raised).
+    //------------------------------------------------------------------------------------------------------------------
 
-        protected abstract validateResult(description: string, validate: internal.Consumer<R>): this;
+    protected abstract validateException(description: string, validate: internal.Consumer<any>): this;
 
-        //--------------------------------------------------------------------------------------------------------------
-        // Run the given validation on the exception thrown (and fail if no exception was raised).
-        //--------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    // Assert that the current set of test data returns the given return value.
+    //------------------------------------------------------------------------------------------------------------------
 
-        protected abstract validateException(description: string, validate: internal.Consumer<any>): this;
+    public resultIs(expectedValue: R | internal.PreStringifiedValue<R>): this {
 
-        //--------------------------------------------------------------------------------------------------------------
-        // Assert that the current set of test data returns the given return value.
-        //--------------------------------------------------------------------------------------------------------------
+        const description = `returns ${stringify.inline(expectedValue)}`
+        expectedValue = expectedValue instanceof internal.PreStringifiedValue ? expectedValue.value : expectedValue;
+        return this.validateResult(description, result => assert.deepStrictEqual(result, expectedValue));
+    }
 
-        public resultIs(expectedValue: R | PreStringifiedValue<R>): this {
+    //------------------------------------------------------------------------------------------------------------------
+    // Assert that the current set of test data causes the given exception to be thrown.
+    //------------------------------------------------------------------------------------------------------------------
 
-            const description = `returns ${stringify.inline(expectedValue)}`
-            expectedValue = expectedValue instanceof internal.PreStringifiedValue ? expectedValue.value : expectedValue;
-            return this.validateResult(description, result => assert.deepStrictEqual(result, expectedValue));
-        }
+    public exceptionIs(expectedError: Error | internal.PreStringifiedValue<Error>): this {
 
-        //--------------------------------------------------------------------------------------------------------------
-        // Assert that the current set of test data causes the given exception to be thrown.
-        //--------------------------------------------------------------------------------------------------------------
-
-        public exceptionIs(expectedError: Error | PreStringifiedValue<Error>): this {
-
-            const description = `throws ${stringify.inline(expectedError)}`;
-            expectedError = expectedError instanceof internal.PreStringifiedValue ? expectedError.value : expectedError;
-            return this.validateException(description, actualError =>
-                assert.deepStrictEqual(stringify.inline(actualError), stringify.inline(expectedError))
-            );
-        }
+        const description = `throws ${stringify.inline(expectedError)}`;
+        expectedError = expectedError instanceof internal.PreStringifiedValue ? expectedError.value : expectedError;
+        return this.validateException(description, actualError =>
+            assert.deepStrictEqual(stringify.inline(actualError), stringify.inline(expectedError))
+        );
     }
 }

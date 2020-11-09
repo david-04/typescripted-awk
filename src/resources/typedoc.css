@@ -64,7 +64,7 @@ footer {
     content : "Interfaces";
 }
 .tsd-navigation li.tsd-kind-type-alias:first-child:before, .tsd-navigation li:not(.tsd-kind-type-alias) + li.tsd-kind-type-alias:before {
-    content : "Types";
+    content : "Type aliases";
 }
 .tsd-navigation li.tsd-kind-variable:first-child:before, .tsd-navigation li:not(.tsd-kind-variable) + li.tsd-kind-variable:before {
     content : "Variables";
@@ -121,4 +121,10 @@ section.tsd-member .tsd-anchor + h3 {
     margin-top: -1.3rem;
     padding-top: 1rem;
     padding-bottom: 1rem;
+}
+
+/* Don't use a larger font size for leading paragraphs */
+.tsd-panel.tsd-comment .lead {
+    font-size: 1.0em;
+    line-height: 1.333em;
 }

@@ -1,4 +1,4 @@
-testGroupForFile.setRootFolders("library");
+testGroupForFile.setRootFolder("library");
 
 //----------------------------------------------------------------------------------------------------------------------
 // filenameToTestGroup()

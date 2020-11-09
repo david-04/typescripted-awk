@@ -1,8 +1,15 @@
 namespace internal {
 
     //------------------------------------------------------------------------------------------------------------------
-    // A value with a pre-rendered stringified representation. When a StringifiedValue is passed to a stringifier, it
-    // will use the pre-rendered representation (instead of stringifying the value).
+    // A value with a pre-rendered stringified representation. When passed to a stringifier, it uses the pre-rendered
+    // representation rather than stringifying the underlying value. The `preStringify()` function can be used to
+    // construct an instance of the `PreStringifiedValue`:
+    //
+    // ```typescript
+    // const myObject = { value: preStringify(123).as("one-two-three") };
+    // stringify(myObject); // returns { value: one-two-three }
+    // ```
+    //
     // @brief   A value with a pre-rendered stringified representation.
     // @type    T The type of the value.
     //------------------------------------------------------------------------------------------------------------------
@@ -10,43 +17,56 @@ namespace internal {
     export class PreStringifiedValue<T> {
 
         //--------------------------------------------------------------------------------------------------------------
-        // Initialize a new PreStringifiedValue.
-        // @param   value The value itself.
-        // @param   stringifiedValue The pre-rendered string representation of the value.
+        // Initialize a new `PreStringifiedValue`.
+        //
+        // @brief   Initialize a new PreStringifiedValue.
+        // @param   value The underlying (non-stringified) value.
+        // @param   stringifiedValue The pre-rendered string representation.
         //--------------------------------------------------------------------------------------------------------------
 
-        public constructor(public readonly value: T, public readonly stringifiedValue: string) { }
+        public constructor(
+            // The underlying (non-stringified) value.
+            public readonly value: T,
+            // The pre-rendered string representation.
+            public readonly stringifiedValue: string
+        ) { }
     }
 
     //------------------------------------------------------------------------------------------------------------------
-    // A builder for attaching a pre-rendered stringified representation to a value.
+    // A builder for the `PreStringifiedValue` class that attaches a pre-rendered stringified representation to a value.
+    // The builder is created by and obtained through the `preStringify()` function:
+    //
+    // ```typescript
+    // const preStringifiedValue = preStringify(123).as("one-two-three");
+    // ```
+    //
+    // @brief   A builder for creating a pre-stringified value.
     // @type    T The type of the value.
     //------------------------------------------------------------------------------------------------------------------
 
-    export class PreStringifiedValueBuilder<T> {
+    export type PreStringifiedValueBuilder<T> = {
 
         //--------------------------------------------------------------------------------------------------------------
-        // Initialize a new PreStringifiedValueBuilder.
-        // @param   value The value itself.
-        //-----------------------------------------------------------------------------------------------------------
-
-        public constructor(protected readonly value: T) { }
-
-        //--------------------------------------------------------------------------------------------------------------
-        // Attach a pre-rendered stringified representation to the value.
-        // @param   stringifiedValue The stringified representation of the value.
-        // @return  Returns a PreStringifiedValue that holds the value and its pre-stringified representation.
+        // Create a `PreStringifiedValue` by attaching the the pre-rendered stringified representation.
         //--------------------------------------------------------------------------------------------------------------
 
-        public as(stringifiedValue: string) {
-            return new PreStringifiedValue(this.value, stringifiedValue);
-        }
-    }
+        as: (stringifiedValue: string) => internal.PreStringifiedValue<T>;
+    };
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Create a value with an attached pre-rendered stringified representation. When passed to a stringifier, it will use
-// the pre-rendered representation rather than stringifying the value.
+// Create a value with an attached pre-rendered representation to be used by the stringifier:
+//
+// ```typescript
+// const myObject = { value: preStringify(123).as("one-two-three") };
+// stringify(myObject); // returns { value: one-two-three }
+// ```
+//
+// Quotes are not added automatically. If required, they must be supplied as part of the pre-rendered string.
+//
+// Pre-stringified values are useful for data-driven unit tests. The test framework uses the actual data value for
+// running the test and the pre-stringified representation for assembling the test case description.
+//
 // @brief   Create a value with an attached pre-rendered stringified representation.
 // @param   value The value itself.
 // @return  Returns a builder that allows attaching the pre-rendered stringified representation to the value.
@@ -54,6 +74,6 @@ namespace internal {
 // @level   3
 //----------------------------------------------------------------------------------------------------------------------
 
-function preStringify<T>(value: T) {
-    return new internal.PreStringifiedValueBuilder(value);
+function preStringify<T>(value: T): internal.PreStringifiedValueBuilder<T> {
+    return { as: (description: string) => new internal.PreStringifiedValue(value, description) };
 }

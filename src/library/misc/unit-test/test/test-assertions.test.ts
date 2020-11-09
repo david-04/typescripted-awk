@@ -4,7 +4,7 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
     // Setup
     //------------------------------------------------------------------------------------------------------------------
 
-    class TestAssertions<R> extends internal.TestAssertions<any, R> {
+    class TestAssertionsWrapper<R> extends TestAssertions<any, R> {
 
         public constructor(private readonly action: internal.Supplier<R>) {
             super();
@@ -38,14 +38,14 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
     function test<R>(
         description: string,
         action: internal.Supplier<R>,
-        assertion: internal.Consumer<internal.TestAssertions<any, R>>,
+        assertion: internal.Consumer<TestAssertions<any, R>>,
         shouldSucceed: boolean
     ) {
 
         testCase(description, () => {
             let error;
             try {
-                assertion(new TestAssertions(action));
+                assertion(new TestAssertionsWrapper(action));
             } catch (exception) {
                 error = { exception };
             }
@@ -57,11 +57,7 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
         });
     }
 
-    function testResult<R>(
-        result: R,
-        assert: internal.Consumer<internal.TestAssertions<any, R>>,
-        shouldSucceed: boolean
-    ) {
+    function testResult<R>(result: R, assert: internal.Consumer<TestAssertions<any, R>>, shouldSucceed: boolean) {
         const expectedResult = preStringify("").as(shouldSucceed ? "succeeds" : "fails");
         const description = stringify.inline.format("$1.[$2] $3", result, assert, expectedResult);
         test(description, () => result, assert, shouldSucceed)

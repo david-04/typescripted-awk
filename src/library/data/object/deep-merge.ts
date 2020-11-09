@@ -1,8 +1,10 @@
 //----------------------------------------------------------------------------------------------------------------------
-// Create a deep copy of an object and merge (overlay) it with another one. The resulting object contains all properties
-// of the overlaid object as well as any that only exist in the base object.
+// Create a deep copy of a base object and overlay it with another one. The resulting object contains all properties
+// of the overlaid object as well as any that only exist in the base object. The function handles circular references
+// (an object nested inside of itself) and also merges class instances - but only if the two instances are of the
+// exactly same class. Instances of inherited classes are not merged.
 //
-// ```ts
+// ```typescript
 // deepMerge(
 //     {
 //         name: 'John Smith',
@@ -31,7 +33,7 @@
 // }
 // ```
 //
-// @brief   Deep-clone an object and merge it with another one.
+// @brief   Deep-clone an object and merge (overlay) it with another one.
 // @param   base The base object to be cloned and overlaid.
 // @param   overlay The overlay object to override properties of the base object.
 // @return  Returns a deep clone of the base object overlaid with the overlay object.
@@ -40,6 +42,12 @@
 // @level   3
 //----------------------------------------------------------------------------------------------------------------------
 
+function deepMerge<B, O>(base: B, overlay: Exclude<O, null | undefined>): (B & O);
+
+// @repeat
+function deepMerge<B, O>(base: B, overlay: O): (B & O) | Extract<O, null | undefined>;
+
+// @repeat
 function deepMerge<B, O>(base: B, overlay: O): B & O {
     return recursiveMerge(deepClone(base), overlay, []);
 }
