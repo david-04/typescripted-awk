@@ -10,7 +10,7 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
             super();
         }
 
-        public with(..._parameters: any): this {
+        public when(..._parameters: any): this {
             return this;
         }
 
@@ -32,6 +32,15 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
                 assert.fail("No exception was thrown");
             }
             return this;
+        }
+
+        protected getException() {
+            try {
+                this.action();
+            } catch (exception) {
+                return exception;
+            }
+            return undefined;
         }
     }
 
@@ -72,7 +81,7 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
         const description = stringify.inline.format(
             "$1 $2 for () => { throw new $3 }", assert, expectedResult, exception
         );
-        test(description, () => { throw exception }, assert, shouldSucceed);
+        test(description, () => { if (undefined !== exception) throw exception }, assert, shouldSucceed);
     }
 
     class MyError<T> extends Error {
@@ -89,52 +98,72 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
     const succeeds = true;
 
     //------------------------------------------------------------------------------------------------------------------
-    // exceptionIs()
+    // throws()
     //------------------------------------------------------------------------------------------------------------------
 
     testGroup("throws()", () => {
 
-        testException(new Error("oops"), validator => validator.exceptionIs(new Error("oops")), succeeds);
-        testException(new Error("404"), validator => validator.exceptionIs(new Error("500")), fails);
-        testException(new MyError("oops"), validator => validator.exceptionIs(new Error("oops")), fails);
-        testException(new MyError("x", { a: 1 }), validator => validator.exceptionIs(new MyError("x", { a: 2 })), fails);
-        testException(new MyError("x", { a: 1 }), validator => validator.exceptionIs(new MyError("x", { a: 1 })), succeeds);
+        testException(new Error("oops"), validator => validator.throws(new Error("oops")), succeeds);
+        testException(new Error("404"), validator => validator.throws(new Error("500")), fails);
+        testException(new MyError("oops"), validator => validator.throws(new Error("oops")), fails);
+        testException(new MyError("x", { a: 1 }), validator => validator.throws(new MyError("x", { a: 2 })), fails);
+        testException(new MyError("x", { a: 1 }), validator => validator.throws(new MyError("x", { a: 1 })), succeeds);
 
         testException(
             new Error("oops"),
-            validator => validator.exceptionIs(preStringify(new Error("oops")).as('new Error("...")')),
+            validator => validator.throws(preStringify(new Error("oops")).as('new Error("...")')),
             succeeds
         );
 
         testException(
             new Error("oops"),
-            validator => validator.exceptionIs(preStringify(new Error("...")).as('new Error("oops")')),
+            validator => validator.throws(preStringify(new Error("...")).as('new Error("oops")')),
             fails
         );
+
+        testException(new Error("oops"), validator => validator.throws(), succeeds);
+
+        testException(new Error("oops"), validator => validator.throws("oops"), succeeds);
+        testException(new Error("oops"), validator => validator.throws("Oops"), fails);
+        testException(new Error("oops"), validator => validator.throws("op"), fails);
+        testException("oops", validator => validator.throws("oops"), succeeds);
+        testException("oops", validator => validator.throws("Oops"), fails);
+        testException("oops", validator => validator.throws("op"), fails);
+
+        testException(new Error("oops"), validator => validator.throws(/op/), succeeds);
+        testException(new Error("oops"), validator => validator.throws(/^oop/), succeeds);
+        testException(new Error("oops"), validator => validator.throws(/^oop$/), fails);
+        testException(new Error("oops"), validator => validator.throws(/Op/), fails);
+        testException(new Error("oops"), validator => validator.throws(/Op/i), succeeds);
+
+        testException(undefined, validator => validator.throws(), fails);
+        testException(undefined, validator => validator.throws(new Error()), fails);
+        testException(undefined, validator => validator.throws(""), fails);
+        testException(undefined, validator => validator.throws(/.*/), fails);
     });
 
     //------------------------------------------------------------------------------------------------------------------
-    // resultIs()
+    // returns()
     //------------------------------------------------------------------------------------------------------------------
 
-    testGroup("resultIs()", () => {
+    testGroup("returns()", () => {
 
-        testResult("abc", validator => validator.resultIs("abc"), succeeds);
-        testResult("abc", validator => validator.resultIs("123"), fails);
-        testResult({ a: 1, b: { c: [2] } }, validator => validator.resultIs({ a: 1, b: { c: [2] } }), succeeds);
-        testResult({ a: 1, b: { c: [2] } }, validator => validator.resultIs({ a: 1, b: { c: [999] } }), fails);
-        testResult(new MyClass("abc"), validator => validator.resultIs(new MyClass("abc")), succeeds);
-        testResult(new MyClass("abc"), validator => validator.resultIs(new MyClass("123")), fails);
+        testResult("abc", validator => validator.returns("abc"), succeeds);
+        testResult("abc", validator => validator.returns("123"), fails);
+        testResult({ a: 1, b: { c: [2] } }, validator => validator.returns({ a: 1, b: { c: [2] } }), succeeds);
+        testResult({ a: 1, b: { c: [2] } }, validator => validator.returns({ a: 1, b: { c: [999] } }), fails);
+        testResult(new MyClass("abc"), validator => validator.returns(new MyClass("abc")), succeeds);
+        testResult(new MyClass("abc"), validator => validator.returns(new MyClass("123")), fails);
 
         testResult(
             new MyClass("abc"),
-            validator => validator.resultIs(preStringify(new MyClass("abc")).as('new MyClass("..."')),
+            validator => validator.returns(preStringify(new MyClass("abc")).as('new MyClass("..."')),
             succeeds
         );
 
         testResult(
             new MyClass("abc"),
-            validator => validator.resultIs(preStringify(new MyClass("...")).as('new MyClass("abc"')),
+            validator => validator.returns(preStringify(new MyClass("...")).as('new MyClass("abc"')),
             fails
         );
     });

@@ -15,6 +15,6 @@ namespace internal {
         // @param   expectedReturnValue The expected return value.
         //--------------------------------------------------------------------------------------------------------------
 
-        resultIs(expectedReturnValue: R | PreStringifiedValue<R>): this;
+        returns(expectedReturnValue: R | PreStringifiedValue<R>): this;
     }
 }

@@ -140,3 +140,16 @@ function isFunction(value: any): value is Function;
 function isFunction(value: any): value is Function {
     return "function" === typeof value;
 }
+
+//----------------------------------------------------------------------------------------------------------------------
+// Type guard to verify that the given value is a regular expression.
+//
+// @brief   Verify that the given value is a regular expression.
+// @param   value The value to examine.
+// @return  Returns a flag indicating if the value is a regular expression.
+// @level   3
+//----------------------------------------------------------------------------------------------------------------------
+
+function isRegExp(value: any): value is RegExp {
+    return value instanceof RegExp;
+}

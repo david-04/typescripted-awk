@@ -179,6 +179,29 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
     });
 
     //------------------------------------------------------------------------------------------------------------------
+    // isRegExp()
+    //------------------------------------------------------------------------------------------------------------------
+
+    testGroup("isRegExp()", () => {
+
+        test("isRegExp", isRegExp, value => value instanceof RegExp);
+
+        testCase("The type guard binds to RegExp", () => {
+
+            const myRegExp = /.*/ as any as Anything;
+
+            // @ts-expect-error - it could be undefined, null or something else altogether
+            myRegExp.test("...");
+
+            if (isRegExp(myRegExp)) {
+
+                // it's typed as string
+                myRegExp.test("...");
+            }
+        });
+    });
+
+    //------------------------------------------------------------------------------------------------------------------
     // isObject()
     //------------------------------------------------------------------------------------------------------------------
 

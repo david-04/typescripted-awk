@@ -25,7 +25,7 @@ namespace internal {
         // @return  An object providing assertion methods.
         //--------------------------------------------------------------------------------------------------------------
 
-        with(...parameters: { [i in keyof P]: P[i] | PreStringifiedValue<P[i]> }): this;
+        when(...parameters: { [i in keyof P]: P[i] | PreStringifiedValue<P[i]> }): this;
 
         //--------------------------------------------------------------------------------------------------------------
         // Assert that the current set of test data causes the given exception to be thrown. Both, the actual and the
@@ -36,6 +36,6 @@ namespace internal {
         // @param   expectedError The expected Error that should be thrown.
         //--------------------------------------------------------------------------------------------------------------
 
-        exceptionIs(expectedError: Error | PreStringifiedValue<Error>): this;
+        throws(expectedError?: Error | string | RegExp | PreStringifiedValue<Error | string | RegExp>): this;
     }
 }

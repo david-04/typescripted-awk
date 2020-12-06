@@ -108,7 +108,7 @@ namespace internal {
         // @return  An object providing assertion methods.
         //--------------------------------------------------------------------------------------------------------------
 
-        with(...parameters: { [i in keyof P]: P[i] | internal.PreStringifiedValue<P[i]> }): this & T;
+        when(...parameters: { [i in keyof P]: P[i] | internal.PreStringifiedValue<P[i]> }): this & T;
     }
 }
 
@@ -134,7 +134,7 @@ class TestTemplate<P extends any[], R, T extends TestTemplate<P, R, any>>
     // Instantiate a new TestTemplate with the given set of test data.
     //------------------------------------------------------------------------------------------------------------------
 
-    public with(...parameters: { [i in keyof P]: P[i] | internal.PreStringifiedValue<P[i]> }): this & T {
+    public when(...parameters: { [i in keyof P]: P[i] | internal.PreStringifiedValue<P[i]> }): this & T {
 
         const descriptor = this.supplier(
             ...parameters.map(param => param instanceof internal.PreStringifiedValue ? param.value : param) as P
@@ -151,7 +151,7 @@ class TestTemplate<P extends any[], R, T extends TestTemplate<P, R, any>>
     }
 
     //------------------------------------------------------------------------------------------------------------------
-    // Getters.
+    // Getters
     //------------------------------------------------------------------------------------------------------------------
 
     private get testRun() {
@@ -197,6 +197,14 @@ class TestTemplate<P extends any[], R, T extends TestTemplate<P, R, any>>
         });
 
         return this;
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Retrieve the exception (if any).
+    //------------------------------------------------------------------------------------------------------------------
+
+    protected getException() {
+        return this.testRun.exception;
     }
 }
 
