@@ -49,6 +49,8 @@ testGroupForFile(getCurrentFilename("__FILE__"), () => {
         ["0                     ", "0          "],
         ["-1.1                  ", "-1.1       "],
         ["9.99                  ", "9.99       "],
+        ["BigInt(999)           ", "BigInt(999)"],
+        ["Symbol(123)           ", "Symbol(123)"],
         ["Math.sqrt(-1)         ", "NaN        "],
         ["Infinity              ", "Infinity   "],
         ["-Infinity             ", "-Infinity  "],

@@ -343,11 +343,13 @@ const stringify = (() => {
         .stringifyAny(value => null === value ? "null" : undefined)
         .stringifyBoolean(value => value ? "true" : "false")
         .stringifyNumber(stringifyNumber)
+        .stringifyAny(value => "bigint" === typeof value ? `BigInt(${value})` : undefined)
         .stringifyString((value, context) => stringifyString(value, context))
         .stringifyRegExp((value, context) => stringifyRegularExpression(value, context.options))
         .stringifyAny((value, context) => value instanceof Error ? stringifyException(value, context) : undefined)
         .stringifyFunction((value, context) => stringifyFunction(value, context.options.breakLines))
         .stringifyArray((value, context) => stringifyArray(value, context))
         .stringifyObject((value, context) => stringifyObject(value, context))
+        .stringifyAny(value => "symbol" === typeof value ? value.toString() : undefined)
     );
 })();
